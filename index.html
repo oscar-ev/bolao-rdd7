@@ -435,17 +435,35 @@ async function loadParticipantes(round) {
   finally { document.getElementById('loading-list').classList.remove('show'); }
 }
 
+function rodadaEncerrada(round) {
+  const jogos = jogosCache[round] || [];
+  if (!jogos.length) return false;
+  // Rodada encerrada se todos os jogos já começaram
+  return jogos.every(j => new Date() >= new Date(j.utcDate));
+}
+
 function renderParticipantes(round) {
   const list = participantesCache[round] || [];
   const jogos = jogosCache[round] || [];
   const wrap = document.getElementById('participants-wrap');
+  const encerrada = rodadaEncerrada(round);
+  const meuNome = (document.getElementById('inp-nome').value.trim() + ' ' + document.getElementById('inp-sobrenome').value.trim()).toLowerCase().trim();
+
   if (!list.length) {
     wrap.innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>Nenhum palpite nessa rodada ainda.</p></div>';
     return;
   }
-  wrap.innerHTML = list.map((p, idx) => {
+
+  // Aviso se rodada ainda em andamento
+  const aviso = !encerrada ? `<div style="background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.25);border-radius:8px;padding:.7rem 1rem;margin-bottom:1rem;font-size:.78rem;color:#ffd600;">
+    🔒 Palpites ocultos até a rodada encerrar. Você só pode ver os seus próprios.
+  </div>` : '';
+
+  wrap.innerHTML = aviso + list.map((p, idx) => {
     const hasPoints = p.pontos != null;
-    const palpHTML = jogos.map((j, ji) => {
+    const isMe = p.key === meuNome || encerrada;
+
+    const palpHTML = isMe ? jogos.map((j, ji) => {
       const id = ji + 1;
       const pal = p.palpites[id];
       const det = p.detalhes ? p.detalhes[id] : null;
@@ -457,7 +475,7 @@ function renderParticipantes(round) {
         <span>${j.home} × ${j.away}</span>
         <span class="pal-score">${pal.home}–${pal.away}${badge}</span>
       </div>`;
-    }).join('');
+    }).join('') : '<span style="color:var(--muted);font-size:.78rem">🔒 Oculto até a rodada encerrar.</span>';
 
     return `<div class="participant-entry">
       <div class="entry-header" onclick="toggleEntry(${idx})">

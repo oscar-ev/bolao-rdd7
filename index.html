@@ -236,7 +236,7 @@ input[type="text"]:focus{border-color:var(--green);}
 <div class="toast" id="toast"></div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXQtHvc69l5U3e43UNbGliIAwPYEJ25cp01YdLW5T_Ce15lWcTRRTOm7KaxoWgWEqS/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsTr9ptsitUxKORh2MlNmogz25hIU1NiOY5Z20vK7yilzqYi7QtvkIdSAO6kW0WUgK/exec';
 
 let currentRound = 7;
 let jogosCache   = {};      // { round: [jogos] }
@@ -600,8 +600,105 @@ function showToast(msg, isError=false) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+
 // ---- INIT ----
 loadJogos(currentRound);
+</script>
+
+<!-- BOTÃO ADMIN -->
+<div style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:100;">
+  <button onclick="abrirAdmin()" style="background:#16201a;border:1px solid #1f2d24;color:#5a7060;border-radius:50%;width:42px;height:42px;font-size:1.1rem;cursor:pointer;" title="Admin">⚙️</button>
+</div>
+
+<!-- MODAL ADMIN -->
+<div id="admin-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;">
+  <div style="background:#16201a;border:1px solid #1f2d24;border-radius:14px;padding:2rem;width:90%;max-width:440px;position:relative;">
+    <button onclick="fecharAdmin()" style="position:absolute;top:.8rem;right:.8rem;background:none;border:none;color:#5a7060;font-size:1.2rem;cursor:pointer;">✕</button>
+    <div id="admin-login">
+      <p style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:#00c853;margin-bottom:1rem;">⚙️ PAINEL ADMIN</p>
+      <label style="display:block;font-size:.7rem;letter-spacing:.1em;color:#5a7060;text-transform:uppercase;margin-bottom:.3rem;">Senha</label>
+      <input type="password" id="admin-senha" placeholder="••••••••"
+        style="width:100%;background:#111714;border:1px solid #1f2d24;border-radius:6px;color:#e8f0ea;font-size:.95rem;padding:.6rem .9rem;outline:none;margin-bottom:.8rem;"
+        onkeydown="if(event.key==='Enter')verificarSenha()">
+      <button onclick="verificarSenha()" style="width:100%;background:#00c853;color:#000;border:none;border-radius:7px;padding:.75rem;font-weight:700;font-size:.9rem;cursor:pointer;">Entrar</button>
+      <p id="admin-erro" style="color:#ff1744;font-size:.78rem;margin-top:.5rem;display:none;">Senha incorreta!</p>
+    </div>
+    <div id="admin-painel" style="display:none;">
+      <p style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:#00c853;margin-bottom:.4rem;">⚙️ PAINEL ADMIN</p>
+      <p style="font-size:.72rem;color:#5a7060;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;">Rodada <strong style="color:#e8f0ea" id="admin-rodada-label">7</strong></p>
+      <div style="display:grid;gap:.6rem;">
+        <button onclick="adminAtualizarPlacares()" style="background:#111714;border:1px solid #1f2d24;color:#e8f0ea;border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">🔄 Atualizar placares da rodada</button>
+        <button onclick="adminCalcularPontos()" style="background:#111714;border:1px solid #1f2d24;color:#e8f0ea;border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">⚡ Calcular pontuações</button>
+        <hr style="border-color:#1f2d24;margin:.3rem 0;">
+        <button onclick="adminResetRodada()" style="background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.3);color:#ff1744;border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">🗑️ Resetar palpites desta rodada</button>
+        <button onclick="adminResetTemporada()" style="background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.3);color:#ff1744;border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">⚠️ Resetar toda a temporada</button>
+      </div>
+      <div id="admin-msg" style="margin-top:.8rem;font-size:.8rem;color:#00c853;min-height:1.2rem;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ADMIN_SENHA = '17dejaneiro';
+function abrirAdmin() {
+  document.getElementById('admin-overlay').style.display='flex';
+  document.getElementById('admin-login').style.display='block';
+  document.getElementById('admin-painel').style.display='none';
+  document.getElementById('admin-erro').style.display='none';
+  document.getElementById('admin-senha').value='';
+  document.getElementById('admin-rodada-label').textContent=currentRound;
+}
+function fecharAdmin(){ document.getElementById('admin-overlay').style.display='none'; }
+function verificarSenha(){
+  if(document.getElementById('admin-senha').value===ADMIN_SENHA){
+    document.getElementById('admin-login').style.display='none';
+    document.getElementById('admin-painel').style.display='block';
+  } else { document.getElementById('admin-erro').style.display='block'; }
+}
+function adminMsg(msg,erro=false){
+  const el=document.getElementById('admin-msg');
+  el.textContent=msg; el.style.color=erro?'#ff1744':'#00c853';
+}
+async function adminAtualizarPlacares(){
+  adminMsg('Buscando...');
+  try {
+    const resp=await fetch(SCRIPT_URL+'?action=scores&matchday='+currentRound);
+    const data=await resp.json();
+    if(data.ok){ jogosCache[currentRound]=data.jogos; scoresCache[currentRound]=data.jogos; renderScores(currentRound); renderMatchGrid(currentRound); adminMsg('✅ Placares atualizados!'); }
+    else adminMsg('❌ '+data.error,true);
+  } catch(e){ adminMsg('❌ Erro de conexão',true); }
+}
+async function adminCalcularPontos(){
+  adminMsg('Calculando...');
+  try {
+    const resp=await fetch(SCRIPT_URL+'?action=ranking_rodada&matchday='+currentRound);
+    const data=await resp.json();
+    if(data.ok){ rankingRodadaCache[currentRound]=data.ranking; renderRankingRodada(currentRound); delete participantesCache[currentRound]; adminMsg('✅ Calculado!'); }
+    else adminMsg('❌ '+data.error,true);
+  } catch(e){ adminMsg('❌ Erro',true); }
+}
+async function adminResetRodada(){
+  if(!confirm('Resetar palpites e pontos da Rodada '+currentRound+'? Irreversível!')) return;
+  adminMsg('Resetando...');
+  try {
+    const resp=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'reset_rodada',matchday:currentRound})});
+    const data=await resp.json();
+    if(data.ok){ delete participantesCache[currentRound]; delete rankingRodadaCache[currentRound]; renderParticipantes(currentRound); adminMsg('✅ Rodada resetada!'); }
+    else adminMsg('❌ '+data.error,true);
+  } catch(e){ adminMsg('❌ Erro',true); }
+}
+async function adminResetTemporada(){
+  if(!confirm('Resetar TODA A TEMPORADA? Irreversível!')) return;
+  if(!confirm('Tem CERTEZA?')) return;
+  adminMsg('Resetando...');
+  try {
+    const resp=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'reset_temporada'})});
+    const data=await resp.json();
+    if(data.ok){ participantesCache={}; rankingRodadaCache={}; jogosCache={}; scoresCache={}; adminMsg('✅ Temporada resetada!'); }
+    else adminMsg('❌ '+data.error,true);
+  } catch(e){ adminMsg('❌ Erro',true); }
+}
+document.getElementById('admin-overlay').addEventListener('click',function(e){ if(e.target===this)fecharAdmin(); });
 </script>
 </body>
 </html>

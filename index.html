@@ -242,32 +242,15 @@ const JOGOS = [
   { id:10, home:'Chapecoense',   away:'Corinthians',   horario:'2026-03-20T21:30:00-03:00', label:'20/03 21:30'   },
 ];
 
-const URL_KEY     = 'bolao_script_url';
+const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbwn1LmaQEOD8JARLa6OoZsvukaRmuXYtqjoyOEFzXJWm8nXOAG1YpEwXwDuDmb0j4HX/exec';
 const RESULTS_KEY = 'bolao_r7_results_api';
 let allParticipants = [];
 let apiScores = {};
 let refreshTimer = null;
 
-function getScriptUrl() { return localStorage.getItem(URL_KEY) || ''; }
+function getScriptUrl() { return SCRIPT_URL; }
 function jogoJaComecou(j) { return new Date() >= new Date(j.horario); }
-
-function saveScriptUrl() {
-  const url = document.getElementById('inp-script-url').value.trim();
-  if (!url.startsWith('https://script.google.com')) { showToast('URL inválida!', true); return; }
-  localStorage.setItem(URL_KEY, url);
-  document.getElementById('config-banner').classList.add('hidden');
-  showToast('✅ URL salva!');
-  loadParticipants();
-}
-
-function checkConfig() {
-  const url = getScriptUrl();
-  if (!url) { document.getElementById('config-banner').classList.remove('hidden'); }
-  else {
-    document.getElementById('config-banner').classList.add('hidden');
-    document.getElementById('inp-script-url').value = url;
-  }
-}
+function checkConfig() { document.getElementById('config-banner').classList.add('hidden'); }
 
 // ---- RENDER MATCHES GRID ----
 function renderMatchGrid() {

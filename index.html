@@ -368,7 +368,26 @@ async function savePalpite() {
     }
   });
 
-  if (!temPalpite) { showToast('⚠️ Informe ao menos um palpite!', true); return; }
+  // Valida se todos os jogos disponíveis foram palpitados
+  const jogosDisponiveis = jogos.filter((j, idx) => {
+    const h = document.getElementById(`ph_${round}_${idx}`);
+    return h && !h.disabled;
+  });
+
+  const jogosSemPalpite = jogosDisponiveis.filter((j, idx) => {
+    const realIdx = jogos.indexOf(j);
+    const h = document.getElementById(`ph_${round}_${realIdx}`);
+    const a = document.getElementById(`pa_${round}_${realIdx}`);
+    return !h || h.value === '' || a.value === '';
+  });
+
+  if (jogosDisponiveis.length > 0 && jogosSemPalpite.length > 0) {
+    const nomes = jogosSemPalpite.map(j => `${j.home} x ${j.away}`).join(', ');
+    showToast(`⚠️ Palpite todos os jogos disponíveis! Faltam: ${nomes}`, true);
+    return;
+  }
+
+  if (!temPalpite) { showToast('⚠️ Nenhum jogo disponível para palpitar!', true); return; }
 
   const btn = document.getElementById('btn-salvar');
   const loading = document.getElementById('loading-save');
@@ -502,7 +521,7 @@ function renderParticipantes(round) {
       const id = ji+1;
       const pal = p.palpites[id];
       const det = p.detalhes ? p.detalhes[id] : null;
-      if (!pal) return '';
+      if (!pal || pal.home === null || isNaN(pal.home)) return '';
       const cls = det==='exact'?'exact':det==='winner'?'winner':'';
       const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
       return `<div class="pal-item ${cls}">

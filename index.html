@@ -6,13 +6,11 @@
 <title>Bolão · Brasileirão 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=Archivo+Black&display=swap" rel="stylesheet">
 <style>
-:root{--green:#00c853;--gold:#ffd600;--red:#ff1744;--blue:#2196f3;--bg:#0a0e0c;--surface:#111714;--card:#16201a;--border:#1f2d24;--text:#e8f0ea;--muted:#5a7060;--accent:#00ff87;}
+:root{--green:#00c853;--gold:#ffd600;--red:#ff1744;--bg:#0a0e0c;--surface:#111714;--card:#16201a;--border:#1f2d24;--text:#e8f0ea;--muted:#5a7060;--accent:#00ff87;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(0,200,83,.12) 0%,transparent 70%);pointer-events:none;z-index:0;}
 .container{max-width:960px;margin:0 auto;padding:0 1rem;position:relative;z-index:1;}
-
-/* HEADER */
 header{padding:2rem 0 1rem;text-align:center;border-bottom:1px solid var(--border);}
 .badge{display:inline-block;background:var(--green);color:#000;font-family:'Bebas Neue',sans-serif;font-size:.75rem;letter-spacing:.15em;padding:.25rem .9rem;border-radius:2px;margin-bottom:.6rem;}
 h1{font-family:'Archivo Black',sans-serif;font-size:clamp(2rem,5vw,3.2rem);line-height:1;color:#fff;}
@@ -21,34 +19,29 @@ h1 span{color:var(--green);}
 .scoring-bar{display:flex;justify-content:center;gap:1rem;margin:.8rem 0 0;flex-wrap:wrap;}
 .score-pill{display:flex;align-items:center;gap:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:.3rem .8rem;font-size:.75rem;}
 .score-pill .pts{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);}
-
-/* RODADA SELECTOR */
 .round-selector{display:flex;align-items:center;justify-content:center;gap:.8rem;padding:1rem 0;flex-wrap:wrap;}
-.round-selector span{color:var(--muted);font-size:.8rem;letter-spacing:.05em;}
-.round-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:.35rem .7rem;font-size:.8rem;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.05em;transition:all .15s;}
+.round-selector span{color:var(--muted);font-size:.8rem;}
+.round-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:.35rem .8rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;cursor:pointer;transition:all .15s;}
 .round-btn:hover{border-color:var(--green);color:var(--green);}
 .round-display{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text);min-width:80px;text-align:center;line-height:1;}
 .round-display span{color:var(--green);}
-
-/* TABS */
 .tab-bar{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:0 0 1.5rem;}
 .tab{flex:1;padding:.65rem .4rem;text-align:center;font-size:.78rem;font-weight:700;cursor:pointer;border:none;background:none;color:var(--muted);letter-spacing:.02em;transition:all .2s;}
 .tab.active{background:var(--green);color:#000;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
-
-/* CARDS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;}
 .card h2{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em;color:var(--green);margin-bottom:.8rem;}
 .card h3{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.08em;color:var(--gold);margin-bottom:.8rem;}
-
-/* FORM */
-.name-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.2rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin-bottom:1rem;}
 label{display:block;font-size:.68rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:.25rem;}
-input[type="text"]{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;padding:.55rem .8rem;outline:none;transition:border-color .2s;}
-input[type="text"]:focus{border-color:var(--green);}
-
-/* MATCHES */
+input[type="text"],input[type="email"]{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;padding:.55rem .8rem;outline:none;transition:border-color .2s;}
+input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
+.user-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.2);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;}
+.user-bar .user-info{font-size:.85rem;}
+.user-bar .user-name{font-weight:700;color:var(--green);}
+.user-bar .user-email{font-size:.72rem;color:var(--muted);}
 .matches-grid{display:grid;gap:.6rem;}
 .match-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;transition:border-color .2s;}
 .match-row.locked{opacity:.5;}
@@ -65,8 +58,6 @@ input[type="text"]:focus{border-color:var(--green);}
 .match-meta{font-size:.6rem;color:var(--muted);text-align:center;letter-spacing:.04em;}
 .lock-tag{font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,23,68,.12);color:var(--red);border-radius:3px;padding:.1rem .35rem;}
 .result-tag{font-size:.6rem;font-weight:700;font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;color:var(--green);}
-
-/* LIVE SCORES */
 .live-grid{display:grid;gap:.4rem;}
 .live-row{display:grid;grid-template-columns:1fr 70px 1fr;align-items:center;gap:.4rem;background:var(--surface);border-radius:6px;padding:.4rem .8rem;font-size:.8rem;}
 .live-home{text-align:right;font-weight:500;}
@@ -80,8 +71,6 @@ input[type="text"]:focus{border-color:var(--green);}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 .dot-live{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--red);animation:blink 1s ease-in-out infinite;margin-right:3px;}
 .update-row{font-size:.6rem;color:var(--muted);text-align:right;margin-top:.4rem;}
-
-/* PARTICIPANTS */
 .participant-entry{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.6rem;}
 .entry-header{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.1rem;cursor:pointer;user-select:none;}
 .entry-name{font-weight:700;font-size:.95rem;}
@@ -96,8 +85,6 @@ input[type="text"]:focus{border-color:var(--green);}
 .pal-badge{font-size:.6rem;font-weight:700;border-radius:3px;padding:.1rem .35rem;margin-left:.3rem;}
 .pal-badge.exact{background:rgba(0,200,83,.15);color:var(--green);}
 .pal-badge.winner{background:rgba(255,214,0,.15);color:var(--gold);}
-
-/* RANKING */
 .rank-table{width:100%;border-collapse:collapse;font-size:.85rem;}
 .rank-table th{text-align:left;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:.4rem .6rem;border-bottom:1px solid var(--border);}
 .rank-table td{padding:.5rem .6rem;border-bottom:1px solid #111;}
@@ -108,23 +95,17 @@ input[type="text"]:focus{border-color:var(--green);}
 .rank-pos.b{color:#bf7a3a;}
 .rank-pts{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--green);text-align:right;}
 .rank-sub{font-size:.7rem;color:var(--muted);}
-
-/* TEMPORADA TABS */
 .sub-tab-bar{display:flex;gap:.5rem;margin-bottom:1rem;}
 .sub-tab{padding:.4rem 1rem;border-radius:100px;font-size:.78rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:none;color:var(--muted);transition:all .2s;}
 .sub-tab.active{background:var(--gold);color:#000;border-color:var(--gold);}
-
-/* ACTIONS */
 .actions{display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap;}
-.btn{flex:1;min-width:120px;padding:.65rem 1rem;border-radius:7px;border:none;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:transform .15s,opacity .15s;}
+.btn{flex:1;min-width:120px;padding:.65rem 1rem;border-radius:7px;border:none;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;transition:transform .15s;}
 .btn:disabled{opacity:.5;cursor:not-allowed;}
 .btn:active:not(:disabled){transform:scale(.97);}
 .btn-primary{background:var(--green);color:#000;}
 .btn-primary:hover:not(:disabled){background:var(--accent);}
 .btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border);}
 .btn-secondary:hover:not(:disabled){border-color:var(--green);color:var(--green);}
-.btn-blue{background:var(--blue);color:#fff;}
-
 .loading-bar{display:none;align-items:center;gap:.5rem;color:var(--muted);font-size:.8rem;padding:.4rem 0;}
 .loading-bar.show{display:flex;}
 .spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
@@ -134,7 +115,12 @@ input[type="text"]:focus{border-color:var(--green);}
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:#000;font-weight:700;padding:.65rem 1.3rem;border-radius:100px;font-size:.85rem;z-index:999;transition:transform .3s ease;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.error{background:var(--red);color:#fff;}
-@media(max-width:600px){.name-row{grid-template-columns:1fr;}.match-row{padding:.55rem .6rem;}.team-name{font-size:.75rem;}}
+/* MODAL EMAIL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#16201a;border:1px solid #1f2d24;border-radius:14px;padding:2rem;width:90%;max-width:420px;position:relative;}
+.modal-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.08em;color:var(--green);margin-bottom:1rem;}
+@media(max-width:600px){.form-grid,.form-grid-3{grid-template-columns:1fr;}.match-row{padding:.55rem .6rem;}.team-name{font-size:.75rem;}}
 </style>
 </head>
 <body>
@@ -151,7 +137,6 @@ input[type="text"]:focus{border-color:var(--green);}
   </div>
 </header>
 
-<!-- SELETOR DE RODADA -->
 <div class="round-selector">
   <button class="round-btn" onclick="changeRound(-1)">◀</button>
   <div class="round-display">RD <span id="round-num">7</span></div>
@@ -159,7 +144,6 @@ input[type="text"]:focus{border-color:var(--green);}
   <span>de 38</span>
 </div>
 
-<!-- TABS -->
 <div class="tab-bar">
   <button class="tab active" onclick="switchTab('palpite')">🎯 Palpitar</button>
   <button class="tab" onclick="switchTab('ao-vivo')">📡 Ao Vivo</button>
@@ -170,20 +154,24 @@ input[type="text"]:focus{border-color:var(--green);}
 <!-- TAB: PALPITAR -->
 <div id="tab-palpite" class="tab-content active">
   <div class="card">
-    <h2>IDENTIFICAÇÃO</h2>
-    <div class="name-row">
-      <div><label>Nome</label><input type="text" id="inp-nome" placeholder="Ex: João"></div>
-      <div><label>Sobrenome</label><input type="text" id="inp-sobrenome" placeholder="Ex: Silva"></div>
-    </div>
-    <h2>PALPITES — RODADA <span id="palpite-round-label">7</span></h2>
-    <p style="font-size:.72rem;color:var(--muted);margin-bottom:.7rem;">🔒 Jogos bloqueados automaticamente no horário de início.</p>
-    <div class="matches-grid" id="matches-grid">
-      <div class="empty-state"><div class="icon">⏳</div><p>Carregando jogos...</p></div>
-    </div>
-    <div class="loading-bar" id="loading-save"><div class="spinner"></div> Salvando...</div>
-    <div class="actions">
-      <button class="btn btn-secondary" onclick="clearForm()">Limpar</button>
-      <button class="btn btn-primary" id="btn-salvar" onclick="savePalpite()">💾 Salvar Palpite</button>
+    <!-- FORM NOVO PALPITE -->
+    <div id="form-palpite">
+      <h2>IDENTIFICAÇÃO</h2>
+      <div class="form-grid-3">
+        <div><label>Nome</label><input type="text" id="inp-nome" placeholder="Ex: João"></div>
+        <div><label>Sobrenome</label><input type="text" id="inp-sobrenome" placeholder="Ex: Silva"></div>
+        <div><label>Email</label><input type="email" id="inp-email" placeholder="seu@email.com"></div>
+      </div>
+      <h2>PALPITES — RODADA <span id="palpite-round-label">7</span></h2>
+      <p style="font-size:.72rem;color:var(--muted);margin-bottom:.7rem;">🔒 Jogos bloqueados automaticamente no horário de início. Guarde seu email para consultar seus palpites.</p>
+      <div class="matches-grid" id="matches-grid">
+        <div class="empty-state"><div class="icon">⏳</div><p>Carregando jogos...</p></div>
+      </div>
+      <div class="loading-bar" id="loading-save"><div class="spinner"></div> Salvando...</div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="clearForm()">Limpar</button>
+        <button class="btn btn-primary" id="btn-salvar" onclick="savePalpite()">💾 Salvar Palpite</button>
+      </div>
     </div>
   </div>
 </div>
@@ -199,16 +187,32 @@ input[type="text"]:focus{border-color:var(--green);}
     <div class="update-row" id="update-row"></div>
     <div class="actions">
       <button class="btn btn-secondary" onclick="loadScores()">🔄 Atualizar</button>
-      <button class="btn btn-primary" onclick="calcularRodada()">⚡ Calcular Pontuações</button>
     </div>
   </div>
 </div>
 
 <!-- TAB: PARTICIPANTES -->
 <div id="tab-resultados" class="tab-content">
+  <!-- Validação por email -->
+  <div class="card" id="email-check-box">
+    <h2>🔍 CONSULTAR MEUS PALPITES</h2>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:.8rem;">Digite seu email para ver seus palpites desbloqueados. Os demais ficam ocultos até a rodada encerrar.</p>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px">
+        <label>Seu Email</label>
+        <input type="email" id="inp-email-check" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')verificarEmail()">
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button class="btn btn-primary" onclick="verificarEmail()" style="flex:none;min-width:100px;">Verificar</button>
+      </div>
+    </div>
+    <div class="loading-bar" id="loading-email-check"><div class="spinner"></div> Verificando...</div>
+    <div id="email-check-result" style="margin-top:.6rem;font-size:.8rem;"></div>
+  </div>
+
   <div class="loading-bar" id="loading-list"><div class="spinner"></div> Carregando participantes...</div>
   <div id="participants-wrap">
-    <div class="empty-state"><div class="icon">🎯</div><p>Nenhum palpite ainda nessa rodada.</p></div>
+    <div class="empty-state"><div class="icon">🎯</div><p>Nenhum palpite nessa rodada ainda.</p></div>
   </div>
 </div>
 
@@ -221,29 +225,61 @@ input[type="text"]:focus{border-color:var(--green);}
   <div id="rank-rodada">
     <div class="loading-bar" id="loading-rank"><div class="spinner"></div> Calculando...</div>
     <div id="ranking-rodada-wrap">
-      <div class="empty-state"><div class="icon">🏆</div><p>Calcule as pontuações para ver o ranking.</p></div>
+      <div class="empty-state"><div class="icon">🏆</div><p>Sem dados ainda.</p></div>
     </div>
   </div>
   <div id="rank-temporada" style="display:none">
-    <div class="loading-bar" id="loading-temp"><div class="spinner"></div> Carregando temporada...</div>
+    <div class="loading-bar" id="loading-temp"><div class="spinner"></div> Carregando...</div>
     <div id="ranking-temporada-wrap">
-      <div class="empty-state"><div class="icon">📊</div><p>Nenhum dado de temporada ainda.</p></div>
+      <div class="empty-state"><div class="icon">📊</div><p>Nenhum dado ainda.</p></div>
     </div>
   </div>
 </div>
 
-</div><!-- /container -->
+</div>
 <div class="toast" id="toast"></div>
+
+<!-- BOTÃO ADMIN -->
+<div style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:100;">
+  <button onclick="abrirAdmin()" style="background:#16201a;border:1px solid #1f2d24;color:#5a7060;border-radius:50%;width:42px;height:42px;font-size:1.1rem;cursor:pointer;" title="Admin">⚙️</button>
+</div>
+
+<!-- MODAL ADMIN -->
+<div class="modal-overlay" id="admin-overlay">
+  <div class="modal-box">
+    <button onclick="fecharAdmin()" style="position:absolute;top:.8rem;right:.8rem;background:none;border:none;color:#5a7060;font-size:1.2rem;cursor:pointer;">✕</button>
+    <div id="admin-login">
+      <h3>⚙️ PAINEL ADMIN</h3>
+      <label>Senha</label>
+      <input type="text" id="admin-senha" placeholder="••••••••" style="margin-bottom:.8rem;" onkeydown="if(event.key==='Enter')verificarSenha()">
+      <button onclick="verificarSenha()" style="width:100%;background:var(--green);color:#000;border:none;border-radius:7px;padding:.75rem;font-weight:700;font-size:.9rem;cursor:pointer;">Entrar</button>
+      <p id="admin-erro" style="color:var(--red);font-size:.78rem;margin-top:.5rem;display:none;">Senha incorreta!</p>
+    </div>
+    <div id="admin-painel" style="display:none;">
+      <h3>⚙️ PAINEL ADMIN</h3>
+      <p style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;">Rodada <strong style="color:var(--text)" id="admin-rodada-label">7</strong></p>
+      <div style="display:grid;gap:.6rem;">
+        <button onclick="adminAtualizarPlacares()" style="background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">🔄 Atualizar placares da rodada</button>
+        <button onclick="adminCalcularPontos()" style="background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">⚡ Calcular pontuações</button>
+        <hr style="border-color:var(--border);margin:.3rem 0;">
+        <button onclick="adminResetRodada()" style="background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.3);color:var(--red);border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">🗑️ Resetar palpites desta rodada</button>
+        <button onclick="adminResetTemporada()" style="background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.3);color:var(--red);border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">⚠️ Resetar toda a temporada</button>
+      </div>
+      <div id="admin-msg" style="margin-top:.8rem;font-size:.8rem;color:var(--green);min-height:1.2rem;"></div>
+    </div>
+  </div>
+</div>
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsTr9ptsitUxKORh2MlNmogz25hIU1NiOY5Z20vK7yilzqYi7QtvkIdSAO6kW0WUgK/exec';
 
 let currentRound = 7;
-let jogosCache   = {};      // { round: [jogos] }
-let participantesCache = {}; // { round: [participantes] }
-let rankingRodadaCache = {}; // { round: ranking }
+let jogosCache = {};
+let participantesCache = {};
+let rankingRodadaCache = {};
 let scoresCache = {};
 let autoRefreshTimer = null;
+let emailVerificado = null; // email verificado na aba participantes
 
 // ---- ROUND NAV ----
 function changeRound(delta) {
@@ -255,12 +291,12 @@ function changeRound(delta) {
   document.getElementById('live-round-label').textContent = nr;
   loadJogos(nr);
   const active = document.querySelector('.tab-content.active');
-  if (active && active.id === 'tab-resultados') loadParticipantes(nr);
-  if (active && active.id === 'tab-ranking') loadRankingRodada(nr);
-  if (active && active.id === 'tab-ao-vivo') renderScores(nr);
+  if (active.id === 'tab-resultados') { emailVerificado = null; loadParticipantes(nr); }
+  if (active.id === 'tab-ranking') loadRankingRodada(nr);
+  if (active.id === 'tab-ao-vivo') renderScores(nr);
 }
 
-// ---- BUSCAR JOGOS DA RODADA ----
+// ---- JOGOS ----
 async function loadJogos(round) {
   if (jogosCache[round]) { renderMatchGrid(round); return; }
   try {
@@ -270,9 +306,7 @@ async function loadJogos(round) {
       jogosCache[round] = data.jogos;
       scoresCache[round] = data.jogos;
       renderMatchGrid(round);
-      if (document.getElementById('tab-ao-vivo').classList.contains('active')) {
-        renderScores(round);
-      }
+      if (document.getElementById('tab-ao-vivo').classList.contains('active')) renderScores(round);
     }
   } catch(e) { console.error(e); }
 }
@@ -280,8 +314,7 @@ async function loadJogos(round) {
 function renderMatchGrid(round) {
   const jogos = jogosCache[round];
   if (!jogos || !jogos.length) {
-    document.getElementById('matches-grid').innerHTML =
-      '<div class="empty-state"><div class="icon">📅</div><p>Jogos desta rodada ainda não disponíveis na API.</p></div>';
+    document.getElementById('matches-grid').innerHTML = '<div class="empty-state"><div class="icon">📅</div><p>Jogos ainda não disponíveis.</p></div>';
     return;
   }
   document.getElementById('matches-grid').innerHTML = jogos.map((j, idx) => {
@@ -289,8 +322,8 @@ function renderMatchGrid(round) {
     const hasResult = j.status === 'FINISHED' && j.scoreHome !== null;
     const resultTag = hasResult ? `<span class="result-tag">${j.scoreHome}–${j.scoreAway}</span>` : '';
     const dt = new Date(j.utcDate);
-    const label = dt.toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
-    return `<div class="match-row${locked ? ' locked' : ''}${hasResult ? ' has-result' : ''}">
+    const label = dt.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    return `<div class="match-row${locked?' locked':''}${hasResult?' has-result':''}">
       <div class="team-name team-home">${j.home}</div>
       <div class="score-center">
         <div class="score-inputs">
@@ -298,8 +331,8 @@ function renderMatchGrid(round) {
           <span class="vs">×</span>
           <input type="number" min="0" max="20" id="pa_${round}_${idx}" placeholder="–" ${locked?'disabled':''}>
         </div>
-        <div class="match-meta">${label} ${locked ? '<span class="lock-tag">🔒</span>' : ''}</div>
-        ${resultTag ? `<div class="match-meta" style="color:var(--green)">${resultTag} FIM</div>` : ''}
+        <div class="match-meta">${label} ${locked?'<span class="lock-tag">🔒</span>':''}</div>
+        ${resultTag?`<div class="match-meta" style="color:var(--green)">${resultTag} FIM</div>`:''}
       </div>
       <div class="team-name">${j.away}</div>
     </div>`;
@@ -310,19 +343,22 @@ function renderMatchGrid(round) {
 async function savePalpite() {
   const nome      = document.getElementById('inp-nome').value.trim();
   const sobrenome = document.getElementById('inp-sobrenome').value.trim();
+  const email     = document.getElementById('inp-email').value.trim().toLowerCase();
+
   if (!nome || !sobrenome) { showToast('⚠️ Informe nome e sobrenome!', true); return; }
+  if (!email || !email.includes('@')) { showToast('⚠️ Informe um email válido!', true); return; }
 
   const round = currentRound;
   const jogos = jogosCache[round];
   if (!jogos || !jogos.length) { showToast('⚠️ Carregue os jogos primeiro!', true); return; }
 
   const palpites = {};
-  const jogos_ids = jogos.map((j, idx) => idx + 1);
+  const jogos_ids = jogos.map((j,idx) => idx+1);
   const jogos_horarios = {};
   let temPalpite = false;
 
   jogos.forEach((j, idx) => {
-    const id = idx + 1;
+    const id = idx+1;
     const h = document.getElementById(`ph_${round}_${idx}`);
     const a = document.getElementById(`pa_${round}_${idx}`);
     jogos_horarios[idx] = j.utcDate;
@@ -339,14 +375,17 @@ async function savePalpite() {
   btn.disabled = true; loading.classList.add('show');
 
   try {
-    const key = (nome + ' ' + sobrenome).toLowerCase();
     const resp = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'palpite', matchday: round, key, nome, sobrenome, palpites, jogos_ids, jogos_horarios })
+      body: JSON.stringify({ action:'palpite', matchday:round, key:email, nome, sobrenome, email, palpites, jogos_ids, jogos_horarios })
     });
     const data = await resp.json();
     if (data.ok) {
-      showToast(`✅ Palpite de ${nome} ${sobrenome} salvo! (Rodada ${round})`);
+      showToast(`✅ Palpite de ${nome} salvo! Guarde seu email: ${email}`);
+      // Salva email no localStorage para facilitar próxima vez
+      localStorage.setItem('bolao_email', email);
+      localStorage.setItem('bolao_nome', nome);
+      localStorage.setItem('bolao_sobrenome', sobrenome);
       clearForm();
       delete participantesCache[round];
     } else {
@@ -356,7 +395,30 @@ async function savePalpite() {
   finally { btn.disabled = false; loading.classList.remove('show'); }
 }
 
-// ---- LOAD SCORES (AO VIVO) ----
+// ---- VERIFICAR EMAIL NA ABA PARTICIPANTES ----
+async function verificarEmail() {
+  const email = document.getElementById('inp-email-check').value.trim().toLowerCase();
+  if (!email || !email.includes('@')) { showToast('⚠️ Informe um email válido!', true); return; }
+
+  document.getElementById('loading-email-check').classList.add('show');
+  document.getElementById('email-check-result').textContent = '';
+
+  try {
+    const resp = await fetch(`${SCRIPT_URL}?action=meu_palpite&matchday=${currentRound}&email=${encodeURIComponent(email)}`);
+    const data = await resp.json();
+    if (data.ok && data.palpite) {
+      emailVerificado = email;
+      document.getElementById('email-check-result').innerHTML = `<span style="color:var(--green)">✅ Palpite encontrado para <strong>${data.palpite.nome} ${data.palpite.sobrenome}</strong>! Seus palpites estão desbloqueados.</span>`;
+      renderParticipantes(currentRound);
+    } else {
+      emailVerificado = null;
+      document.getElementById('email-check-result').innerHTML = `<span style="color:var(--red)">❌ Nenhum palpite encontrado para este email nesta rodada.</span>`;
+    }
+  } catch(e) { showToast('❌ Erro ao verificar', true); }
+  finally { document.getElementById('loading-email-check').classList.remove('show'); }
+}
+
+// ---- LOAD SCORES ----
 async function loadScores() {
   const round = currentRound;
   document.getElementById('loading-scores').classList.add('show');
@@ -369,7 +431,7 @@ async function loadScores() {
       renderScores(round);
       renderMatchGrid(round);
       document.getElementById('update-row').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
-    } else { showToast('⚠️ ' + (data.error || 'Sem dados'), true); }
+    } else { showToast('⚠️ ' + (data.error||'Sem dados'), true); }
   } catch(e) { showToast('❌ Erro ao buscar placares', true); }
   finally { document.getElementById('loading-scores').classList.remove('show'); }
 }
@@ -377,42 +439,20 @@ async function loadScores() {
 function renderScores(round) {
   const jogos = scoresCache[round] || jogosCache[round];
   if (!jogos || !jogos.length) {
-    document.getElementById('live-grid').innerHTML = '<div class="empty-state"><div class="icon">📡</div><p>Nenhum dado disponível. Clique em Atualizar.</p></div>';
+    document.getElementById('live-grid').innerHTML = '<div class="empty-state"><div class="icon">📡</div><p>Clique em Atualizar.</p></div>';
     return;
   }
   document.getElementById('live-grid').innerHTML = jogos.map(j => {
-    const ft = j.status === 'FINISHED';
-    const live = j.status === 'IN_PLAY' || j.status === 'PAUSED';
-    const score = j.scoreHome !== null && j.scoreAway !== null ? `${j.scoreHome}–${j.scoreAway}` : '·–·';
-    const cls = ft ? 'ft' : live ? 'live' : 'ns';
-    const label = ft ? 'FIM' : live ? '● AO VIVO' : new Date(j.utcDate).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const ft = j.status==='FINISHED', live = j.status==='IN_PLAY'||j.status==='PAUSED';
+    const score = j.scoreHome!==null&&j.scoreAway!==null ? `${j.scoreHome}–${j.scoreAway}` : '·–·';
+    const cls = ft?'ft':live?'live':'ns';
+    const label = ft?'FIM':live?'● AO VIVO':new Date(j.utcDate).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     return `<div class="live-row">
       <span class="live-home">${j.home}</span>
-      <div>
-        <div class="live-score-val ${cls}">${score}</div>
-        <div class="live-status ${cls}">${label}</div>
-      </div>
+      <div><div class="live-score-val ${cls}">${score}</div><div class="live-status ${cls}">${label}</div></div>
       <span>${j.away}</span>
     </div>`;
   }).join('');
-}
-
-// ---- CALCULAR RODADA ----
-async function calcularRodada() {
-  const round = currentRound;
-  document.getElementById('loading-rank').classList.add('show');
-  try {
-    const resp = await fetch(`${SCRIPT_URL}?action=ranking_rodada&matchday=${round}`);
-    const data = await resp.json();
-    if (data.ok) {
-      rankingRodadaCache[round] = data.ranking;
-      renderRankingRodada(round);
-      // Recarrega participantes com pontos
-      await loadParticipantes(round);
-      showToast('⚡ Pontuações calculadas!');
-    } else { showToast('❌ ' + (data.error || 'Erro ao calcular'), true); }
-  } catch(e) { showToast('❌ Erro ao calcular', true); }
-  finally { document.getElementById('loading-rank').classList.remove('show'); }
 }
 
 // ---- LOAD PARTICIPANTES ----
@@ -423,12 +463,9 @@ async function loadParticipantes(round) {
     const data = await resp.json();
     if (data.ok) {
       participantesCache[round] = data.participantes || [];
-      // Enriquecer com pontos do ranking se disponível
-      const ranking = rankingRodadaCache[round] || [];
-      participantesCache[round].forEach(p => {
-        const r = ranking.find(r => r.key === p.key);
-        if (r) { p.pontos = r.pontos; p.detalhes = r.detalhes; }
-      });
+      if (data.jogosAPI && data.jogosAPI.length) {
+        if (!jogosCache[round]) jogosCache[round] = data.jogosAPI.map((j,i) => ({...j, id:i+1, matchday:round}));
+      }
       renderParticipantes(round);
     }
   } catch(e) { showToast('❌ Erro ao carregar', true); }
@@ -438,39 +475,36 @@ async function loadParticipantes(round) {
 function rodadaEncerrada(round) {
   const jogos = jogosCache[round] || [];
   if (!jogos.length) return false;
-  // Rodada encerrada se todos os jogos já começaram
   return jogos.every(j => new Date() >= new Date(j.utcDate));
 }
 
 function renderParticipantes(round) {
-  const list = participantesCache[round] || [];
+  const list  = participantesCache[round] || [];
   const jogos = jogosCache[round] || [];
-  const wrap = document.getElementById('participants-wrap');
+  const wrap  = document.getElementById('participants-wrap');
   const encerrada = rodadaEncerrada(round);
-  const meuNome = (document.getElementById('inp-nome').value.trim() + ' ' + document.getElementById('inp-sobrenome').value.trim()).toLowerCase().trim();
 
   if (!list.length) {
     wrap.innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>Nenhum palpite nessa rodada ainda.</p></div>';
     return;
   }
 
-  // Aviso se rodada ainda em andamento
-  const aviso = !encerrada ? `<div style="background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.25);border-radius:8px;padding:.7rem 1rem;margin-bottom:1rem;font-size:.78rem;color:#ffd600;">
-    🔒 Palpites ocultos até a rodada encerrar. Você só pode ver os seus próprios.
-  </div>` : '';
+  const aviso = !encerrada && !emailVerificado
+    ? `<div style="background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.25);border-radius:8px;padding:.7rem 1rem;margin-bottom:1rem;font-size:.78rem;color:#ffd600;">
+        🔒 Verifique seu email acima para ver seus palpites. Os demais ficam ocultos até a rodada encerrar.
+      </div>` : '';
 
   wrap.innerHTML = aviso + list.map((p, idx) => {
     const hasPoints = p.pontos != null;
-    const isMe = p.key === meuNome || encerrada;
+    const isMe = encerrada || (emailVerificado && p.key === emailVerificado);
 
     const palpHTML = isMe ? jogos.map((j, ji) => {
-      const id = ji + 1;
+      const id = ji+1;
       const pal = p.palpites[id];
       const det = p.detalhes ? p.detalhes[id] : null;
       if (!pal) return '';
-      const cls = det === 'exact' ? 'exact' : det === 'winner' ? 'winner' : '';
-      const badge = det === 'exact' ? '<span class="pal-badge exact">3pts</span>'
-                  : det === 'winner' ? '<span class="pal-badge winner">1pt</span>' : '';
+      const cls = det==='exact'?'exact':det==='winner'?'winner':'';
+      const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
       return `<div class="pal-item ${cls}">
         <span>${j.home} × ${j.away}</span>
         <span class="pal-score">${pal.home}–${pal.away}${badge}</span>
@@ -481,17 +515,18 @@ function renderParticipantes(round) {
       <div class="entry-header" onclick="toggleEntry(${idx})">
         <span class="entry-name">${p.nome} ${p.sobrenome}</span>
         <div style="display:flex;align-items:center;gap:.5rem">
-          ${hasPoints ? `<div style="text-align:right"><div class="entry-pts">${p.pontos}</div><div class="entry-pts-label">pts</div></div>` : ''}
+          ${hasPoints?`<div style="text-align:right"><div class="entry-pts">${p.pontos}</div><div class="entry-pts-label">pts</div></div>`:''}
+          ${isMe?'<span style="font-size:.65rem;background:rgba(0,200,83,.15);color:var(--green);border-radius:3px;padding:.15rem .4rem;font-weight:700;">VOCÊ</span>':''}
         </div>
       </div>
-      <div class="entry-palpites" id="ep-${idx}">${palpHTML || '<span style="color:var(--muted);font-size:.78rem">Sem palpites.</span>'}</div>
+      <div class="entry-palpites" id="ep-${idx}">${palpHTML||'<span style="color:var(--muted);font-size:.78rem">Sem palpites.</span>'}</div>
     </div>`;
   }).join('');
 }
 
 function toggleEntry(idx) { document.getElementById(`ep-${idx}`).classList.toggle('open'); }
 
-// ---- RANKING RODADA ----
+// ---- RANKING ----
 async function loadRankingRodada(round) {
   if (rankingRodadaCache[round]) { renderRankingRodada(round); return; }
   document.getElementById('loading-rank').classList.add('show');
@@ -506,61 +541,46 @@ async function loadRankingRodada(round) {
 function renderRankingRodada(round) {
   const ranking = rankingRodadaCache[round] || [];
   const wrap = document.getElementById('ranking-rodada-wrap');
-  if (!ranking.length) {
-    wrap.innerHTML = '<div class="empty-state"><div class="icon">🏆</div><p>Calcule as pontuações para ver o ranking.</p></div>';
-    return;
-  }
-  const rows = ranking.map((p, i) => {
+  if (!ranking.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">🏆</div><p>Sem dados.</p></div>'; return; }
+  const rows = ranking.map((p,i) => {
     const cls = i===0?'g':i===1?'s':i===2?'b':'';
     const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
-    const ex = p.detalhes ? Object.values(p.detalhes).filter(v=>v==='exact').length : 0;
-    const wi = p.detalhes ? Object.values(p.detalhes).filter(v=>v==='winner').length : 0;
-    return `<tr>
-      <td class="rank-pos ${cls}">${medal}</td>
-      <td style="font-weight:600">${p.nome} ${p.sobrenome}</td>
-      <td style="color:var(--green);text-align:center" class="rank-sub">${ex}×3</td>
-      <td style="color:var(--gold);text-align:center" class="rank-sub">${wi}×1</td>
-      <td class="rank-pts">${p.pontos}</td>
-    </tr>`;
+    const ex = p.detalhes?Object.values(p.detalhes).filter(v=>v==='exact').length:0;
+    const wi = p.detalhes?Object.values(p.detalhes).filter(v=>v==='winner').length:0;
+    return `<tr><td class="rank-pos ${cls}">${medal}</td><td style="font-weight:600">${p.nome} ${p.sobrenome}</td><td style="color:var(--green);text-align:center" class="rank-sub">${ex}×3</td><td style="color:var(--gold);text-align:center" class="rank-sub">${wi}×1</td><td class="rank-pts">${p.pontos}</td></tr>`;
   }).join('');
-  wrap.innerHTML = `<table class="rank-table">
-    <thead><tr><th>#</th><th>Participante</th><th>Exatos</th><th>Acertos</th><th style="text-align:right">Pts</th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  wrap.innerHTML = `<table class="rank-table"><thead><tr><th>#</th><th>Participante</th><th>Exatos</th><th>Acertos</th><th style="text-align:right">Pts</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-// ---- RANKING TEMPORADA ----
 async function loadRankingTemporada() {
   document.getElementById('loading-temp').classList.add('show');
   try {
     const resp = await fetch(`${SCRIPT_URL}?action=ranking_temporada`);
     const data = await resp.json();
     if (data.ok) renderRankingTemporada(data.ranking);
-  } catch(e) { showToast('❌ Erro ao carregar temporada', true); }
+  } catch(e) {}
   finally { document.getElementById('loading-temp').classList.remove('show'); }
 }
 
 function renderRankingTemporada(ranking) {
   const wrap = document.getElementById('ranking-temporada-wrap');
-  if (!ranking || !ranking.length) {
-    wrap.innerHTML = '<div class="empty-state"><div class="icon">📊</div><p>Nenhum dado ainda.</p></div>';
-    return;
-  }
-  const rows = ranking.map((p, i) => {
+  if (!ranking||!ranking.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">📊</div><p>Nenhum dado ainda.</p></div>'; return; }
+  const rows = ranking.map((p,i) => {
     const cls = i===0?'g':i===1?'s':i===2?'b':'';
     const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
-    return `<tr>
-      <td class="rank-pos ${cls}">${medal}</td>
-      <td style="font-weight:600">${p.nome} ${p.sobrenome}</td>
-      <td style="color:var(--muted);text-align:center" class="rank-sub">${p.rodadas} rodadas</td>
-      <td style="color:var(--muted);text-align:center" class="rank-sub">melhor: ${p.melhor}pts</td>
-      <td class="rank-pts">${p.totalPts}</td>
-    </tr>`;
+    return `<tr><td class="rank-pos ${cls}">${medal}</td><td style="font-weight:600">${p.nome} ${p.sobrenome}</td><td style="color:var(--muted);text-align:center" class="rank-sub">${p.rodadas} rodadas</td><td style="color:var(--muted);text-align:center" class="rank-sub">melhor: ${p.melhor}pts</td><td class="rank-pts">${p.totalPts}</td></tr>`;
   }).join('');
-  wrap.innerHTML = `<table class="rank-table">
-    <thead><tr><th>#</th><th>Participante</th><th>Rodadas</th><th>Melhor</th><th style="text-align:right">Total</th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  wrap.innerHTML = `<table class="rank-table"><thead><tr><th>#</th><th>Participante</th><th>Rodadas</th><th>Melhor</th><th style="text-align:right">Total</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// ---- CLEAR FORM ----
+function clearForm() {
+  const jogos = jogosCache[currentRound] || [];
+  jogos.forEach((j,idx) => {
+    const h = document.getElementById(`ph_${currentRound}_${idx}`);
+    const a = document.getElementById(`pa_${currentRound}_${idx}`);
+    if (h && !h.disabled) { h.value=''; a.value=''; }
+  });
 }
 
 // ---- TABS ----
@@ -568,125 +588,69 @@ function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById(`tab-${tab}`).classList.add('active');
-  document.querySelectorAll('.tab').forEach(t => {
-    if (t.getAttribute('onclick') && t.getAttribute('onclick').includes(tab)) t.classList.add('active');
-  });
-  if (tab === 'ao-vivo') { loadScores(); startAutoRefresh(); }
-  else { stopAutoRefresh(); }
-  if (tab === 'resultados') loadParticipantes(currentRound);
-  if (tab === 'ranking') loadRankingRodada(currentRound);
-  if (tab === 'palpite') loadJogos(currentRound);
+  document.querySelectorAll('.tab').forEach(t => { if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes(tab)) t.classList.add('active'); });
+  if (tab==='ao-vivo') { loadScores(); startAutoRefresh(); }
+  else stopAutoRefresh();
+  if (tab==='resultados') loadParticipantes(currentRound);
+  if (tab==='ranking') loadRankingRodada(currentRound);
+  if (tab==='palpite') loadJogos(currentRound);
 }
 
 function switchSubTab(sub) {
   document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.sub-tab').forEach(t => {
-    if (t.getAttribute('onclick').includes(sub)) t.classList.add('active');
-  });
-  document.getElementById('rank-rodada').style.display = sub === 'rodada' ? 'block' : 'none';
-  document.getElementById('rank-temporada').style.display = sub === 'temporada' ? 'block' : 'none';
-  if (sub === 'temporada') loadRankingTemporada();
-  if (sub === 'rodada') loadRankingRodada(currentRound);
+  document.querySelectorAll('.sub-tab').forEach(t => { if(t.getAttribute('onclick').includes(sub)) t.classList.add('active'); });
+  document.getElementById('rank-rodada').style.display = sub==='rodada'?'block':'none';
+  document.getElementById('rank-temporada').style.display = sub==='temporada'?'block':'none';
+  if (sub==='temporada') loadRankingTemporada();
+  if (sub==='rodada') loadRankingRodada(currentRound);
 }
 
 // ---- AUTO REFRESH ----
 function startAutoRefresh() {
   stopAutoRefresh();
-  autoRefreshTimer = setInterval(() => {
-    if (document.getElementById('tab-ao-vivo').classList.contains('active')) loadScores();
-  }, 5 * 60 * 1000);
+  autoRefreshTimer = setInterval(() => { if(document.getElementById('tab-ao-vivo').classList.contains('active')) loadScores(); }, 5*60*1000);
 }
-function stopAutoRefresh() { if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; } }
-
-// ---- CLEAR FORM ----
-function clearForm() {
-  document.getElementById('inp-nome').value = '';
-  document.getElementById('inp-sobrenome').value = '';
-  const jogos = jogosCache[currentRound] || [];
-  jogos.forEach((j, idx) => {
-    const h = document.getElementById(`ph_${currentRound}_${idx}`);
-    const a = document.getElementById(`pa_${currentRound}_${idx}`);
-    if (h && !h.disabled) { h.value = ''; a.value = ''; }
-  });
-}
+function stopAutoRefresh() { if(autoRefreshTimer){ clearInterval(autoRefreshTimer); autoRefreshTimer=null; } }
 
 // ---- TOAST ----
 function showToast(msg, isError=false) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast' + (isError?' error':'');
+  t.textContent=msg; t.className='toast'+(isError?' error':'');
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  setTimeout(()=>t.classList.remove('show'), 3000);
 }
 
-
-// ---- INIT ----
-loadJogos(currentRound);
-</script>
-
-<!-- BOTÃO ADMIN -->
-<div style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:100;">
-  <button onclick="abrirAdmin()" style="background:#16201a;border:1px solid #1f2d24;color:#5a7060;border-radius:50%;width:42px;height:42px;font-size:1.1rem;cursor:pointer;" title="Admin">⚙️</button>
-</div>
-
-<!-- MODAL ADMIN -->
-<div id="admin-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;">
-  <div style="background:#16201a;border:1px solid #1f2d24;border-radius:14px;padding:2rem;width:90%;max-width:440px;position:relative;">
-    <button onclick="fecharAdmin()" style="position:absolute;top:.8rem;right:.8rem;background:none;border:none;color:#5a7060;font-size:1.2rem;cursor:pointer;">✕</button>
-    <div id="admin-login">
-      <p style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:#00c853;margin-bottom:1rem;">⚙️ PAINEL ADMIN</p>
-      <label style="display:block;font-size:.7rem;letter-spacing:.1em;color:#5a7060;text-transform:uppercase;margin-bottom:.3rem;">Senha</label>
-      <input type="password" id="admin-senha" placeholder="••••••••"
-        style="width:100%;background:#111714;border:1px solid #1f2d24;border-radius:6px;color:#e8f0ea;font-size:.95rem;padding:.6rem .9rem;outline:none;margin-bottom:.8rem;"
-        onkeydown="if(event.key==='Enter')verificarSenha()">
-      <button onclick="verificarSenha()" style="width:100%;background:#00c853;color:#000;border:none;border-radius:7px;padding:.75rem;font-weight:700;font-size:.9rem;cursor:pointer;">Entrar</button>
-      <p id="admin-erro" style="color:#ff1744;font-size:.78rem;margin-top:.5rem;display:none;">Senha incorreta!</p>
-    </div>
-    <div id="admin-painel" style="display:none;">
-      <p style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em;color:#00c853;margin-bottom:.4rem;">⚙️ PAINEL ADMIN</p>
-      <p style="font-size:.72rem;color:#5a7060;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;">Rodada <strong style="color:#e8f0ea" id="admin-rodada-label">7</strong></p>
-      <div style="display:grid;gap:.6rem;">
-        <button onclick="adminAtualizarPlacares()" style="background:#111714;border:1px solid #1f2d24;color:#e8f0ea;border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">🔄 Atualizar placares da rodada</button>
-        <button onclick="adminCalcularPontos()" style="background:#111714;border:1px solid #1f2d24;color:#e8f0ea;border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">⚡ Calcular pontuações</button>
-        <hr style="border-color:#1f2d24;margin:.3rem 0;">
-        <button onclick="adminResetRodada()" style="background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.3);color:#ff1744;border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">🗑️ Resetar palpites desta rodada</button>
-        <button onclick="adminResetTemporada()" style="background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.3);color:#ff1744;border-radius:7px;padding:.7rem 1rem;font-size:.85rem;font-weight:700;cursor:pointer;text-align:left;">⚠️ Resetar toda a temporada</button>
-      </div>
-      <div id="admin-msg" style="margin-top:.8rem;font-size:.8rem;color:#00c853;min-height:1.2rem;"></div>
-    </div>
-  </div>
-</div>
-
-<script>
+// ---- ADMIN ----
 const ADMIN_SENHA = '17dejaneiro';
 function abrirAdmin() {
-  document.getElementById('admin-overlay').style.display='flex';
+  document.getElementById('admin-overlay').classList.add('show');
   document.getElementById('admin-login').style.display='block';
   document.getElementById('admin-painel').style.display='none';
   document.getElementById('admin-erro').style.display='none';
   document.getElementById('admin-senha').value='';
   document.getElementById('admin-rodada-label').textContent=currentRound;
 }
-function fecharAdmin(){ document.getElementById('admin-overlay').style.display='none'; }
-function verificarSenha(){
-  if(document.getElementById('admin-senha').value===ADMIN_SENHA){
+function fecharAdmin() { document.getElementById('admin-overlay').classList.remove('show'); }
+function verificarSenha() {
+  if(document.getElementById('admin-senha').value===ADMIN_SENHA) {
     document.getElementById('admin-login').style.display='none';
     document.getElementById('admin-painel').style.display='block';
   } else { document.getElementById('admin-erro').style.display='block'; }
 }
-function adminMsg(msg,erro=false){
+function adminMsg(msg,erro=false) {
   const el=document.getElementById('admin-msg');
-  el.textContent=msg; el.style.color=erro?'#ff1744':'#00c853';
+  el.textContent=msg; el.style.color=erro?'var(--red)':'var(--green)';
 }
-async function adminAtualizarPlacares(){
+async function adminAtualizarPlacares() {
   adminMsg('Buscando...');
   try {
     const resp=await fetch(SCRIPT_URL+'?action=scores&matchday='+currentRound);
     const data=await resp.json();
     if(data.ok){ jogosCache[currentRound]=data.jogos; scoresCache[currentRound]=data.jogos; renderScores(currentRound); renderMatchGrid(currentRound); adminMsg('✅ Placares atualizados!'); }
     else adminMsg('❌ '+data.error,true);
-  } catch(e){ adminMsg('❌ Erro de conexão',true); }
+  } catch(e){ adminMsg('❌ Erro',true); }
 }
-async function adminCalcularPontos(){
+async function adminCalcularPontos() {
   adminMsg('Calculando...');
   try {
     const resp=await fetch(SCRIPT_URL+'?action=ranking_rodada&matchday='+currentRound);
@@ -695,8 +659,8 @@ async function adminCalcularPontos(){
     else adminMsg('❌ '+data.error,true);
   } catch(e){ adminMsg('❌ Erro',true); }
 }
-async function adminResetRodada(){
-  if(!confirm('Resetar palpites e pontos da Rodada '+currentRound+'? Irreversível!')) return;
+async function adminResetRodada() {
+  if(!confirm('Resetar palpites da Rodada '+currentRound+'? Irreversível!')) return;
   adminMsg('Resetando...');
   try {
     const resp=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'reset_rodada',matchday:currentRound})});
@@ -705,7 +669,7 @@ async function adminResetRodada(){
     else adminMsg('❌ '+data.error,true);
   } catch(e){ adminMsg('❌ Erro',true); }
 }
-async function adminResetTemporada(){
+async function adminResetTemporada() {
   if(!confirm('Resetar TODA A TEMPORADA? Irreversível!')) return;
   if(!confirm('Tem CERTEZA?')) return;
   adminMsg('Resetando...');
@@ -717,6 +681,17 @@ async function adminResetTemporada(){
   } catch(e){ adminMsg('❌ Erro',true); }
 }
 document.getElementById('admin-overlay').addEventListener('click',function(e){ if(e.target===this)fecharAdmin(); });
+
+// ---- INIT ----
+// Restaura email salvo
+const savedEmail = localStorage.getItem('bolao_email');
+const savedNome  = localStorage.getItem('bolao_nome');
+const savedSob   = localStorage.getItem('bolao_sobrenome');
+if (savedEmail) { document.getElementById('inp-email').value = savedEmail; document.getElementById('inp-email-check').value = savedEmail; }
+if (savedNome)  document.getElementById('inp-nome').value = savedNome;
+if (savedSob)   document.getElementById('inp-sobrenome').value = savedSob;
+
+loadJogos(currentRound);
 </script>
 </body>
 </html>

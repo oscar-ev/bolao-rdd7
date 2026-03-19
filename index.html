@@ -271,7 +271,7 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsTr9ptsitUxKORh2MlNmogz25hIU1NiOY5Z20vK7yilzqYi7QtvkIdSAO6kW0WUgK/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLE98fqokR3P86BUYcIsdW_zrnjJSH-y9d1loCtKdIJtR54D6QU6eeRkUSgegG_1ld/exec';
 
 let currentRound = 7;
 let jogosCache = {};
@@ -489,14 +489,14 @@ function renderParticipantes(round) {
     return;
   }
 
-  const aviso = !encerrada && !emailVerificado
+  const aviso = !emailVerificado
     ? `<div style="background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.25);border-radius:8px;padding:.7rem 1rem;margin-bottom:1rem;font-size:.78rem;color:#ffd600;">
-        🔒 Verifique seu email acima para ver seus palpites. Os demais ficam ocultos até a rodada encerrar.
+        🔒 Verifique seu email acima para ver seus palpites. Os palpites dos outros participantes só ficam visíveis no Ranking após os jogos encerrarem.
       </div>` : '';
 
   wrap.innerHTML = aviso + list.map((p, idx) => {
     const hasPoints = p.pontos != null;
-    const isMe = encerrada || (emailVerificado && p.key === emailVerificado);
+    const isMe = (emailVerificado && p.key === emailVerificado);
 
     const palpHTML = isMe ? jogos.map((j, ji) => {
       const id = ji+1;
@@ -528,12 +528,27 @@ function toggleEntry(idx) { document.getElementById(`ep-${idx}`).classList.toggl
 
 // ---- RANKING ----
 async function loadRankingRodada(round) {
-  if (rankingRodadaCache[round]) { renderRankingRodada(round); return; }
   document.getElementById('loading-rank').classList.add('show');
   try {
+    // Carrega jogos se necessário (para mostrar nomes dos times nos palpites)
+    if (!jogosCache[round]) await loadJogos(round);
     const resp = await fetch(`${SCRIPT_URL}?action=ranking_rodada&matchday=${round}`);
     const data = await resp.json();
-    if (data.ok) { rankingRodadaCache[round] = data.ranking; renderRankingRodada(round); }
+    if (data.ok) {
+      // Enriquece ranking com palpites dos participantes
+      const palResp = await fetch(`${SCRIPT_URL}?action=palpites&matchday=${round}`);
+      const palData = await palResp.json();
+      if (palData.ok) {
+        const palMap = {};
+        (palData.participantes||[]).forEach(p => palMap[p.key] = p.palpites);
+        data.ranking.forEach(p => { if (!p.palpites) p.palpites = palMap[p.key] || {}; });
+      }
+      rankingRodadaCache[round] = data.ranking;
+      renderRankingRodada(round);
+    } else {
+      document.getElementById('ranking-rodada-wrap').innerHTML =
+        '<div class="empty-state"><div class="icon">🏆</div><p>' + (data.error||'Sem dados ainda.') + '</p></div>';
+    }
   } catch(e) {}
   finally { document.getElementById('loading-rank').classList.remove('show'); }
 }
@@ -541,15 +556,50 @@ async function loadRankingRodada(round) {
 function renderRankingRodada(round) {
   const ranking = rankingRodadaCache[round] || [];
   const wrap = document.getElementById('ranking-rodada-wrap');
-  if (!ranking.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">🏆</div><p>Sem dados.</p></div>'; return; }
+  if (!ranking.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">🏆</div><p>Sem dados ainda. Os placares precisam ser calculados.</p></div>'; return; }
+  const jogos = jogosCache[round] || [];
+  const encerrada = rodadaEncerrada(round);
+
   const rows = ranking.map((p,i) => {
     const cls = i===0?'g':i===1?'s':i===2?'b':'';
     const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
     const ex = p.detalhes?Object.values(p.detalhes).filter(v=>v==='exact').length:0;
     const wi = p.detalhes?Object.values(p.detalhes).filter(v=>v==='winner').length:0;
-    return `<tr><td class="rank-pos ${cls}">${medal}</td><td style="font-weight:600">${p.nome} ${p.sobrenome}</td><td style="color:var(--green);text-align:center" class="rank-sub">${ex}×3</td><td style="color:var(--gold);text-align:center" class="rank-sub">${wi}×1</td><td class="rank-pts">${p.pontos}</td></tr>`;
+
+    // Palpites expandíveis no ranking (só após encerrar)
+    const palpHTML = encerrada && jogos.length ? jogos.map((j,ji) => {
+      const id = ji+1;
+      const pal = p.palpites ? p.palpites[id] : null;
+      const det = p.detalhes ? p.detalhes[id] : null;
+      if (!pal) return '';
+      const palCls = det==='exact'?'exact':det==='winner'?'winner':'';
+      const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
+      return `<div class="pal-item ${palCls}"><span>${j.home} × ${j.away}</span><span class="pal-score">${pal.home}–${pal.away}${badge}</span></div>`;
+    }).join('') : '';
+
+    const expandBtn = encerrada && palpHTML
+      ? `<button onclick="toggleRankEntry('rk-${i}')" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:5px;padding:.2rem .6rem;font-size:.7rem;cursor:pointer;margin-left:.5rem;">ver palpites</button>` : '';
+
+    return `<tr>
+      <td class="rank-pos ${cls}">${medal}</td>
+      <td style="font-weight:600">${p.nome} ${p.sobrenome}${expandBtn}</td>
+      <td style="color:var(--green);text-align:center" class="rank-sub">${ex}×3</td>
+      <td style="color:var(--gold);text-align:center" class="rank-sub">${wi}×1</td>
+      <td class="rank-pts">${p.pontos}</td>
+    </tr>
+    ${palpHTML ? `<tr id="rk-${i}" style="display:none"><td colspan="5"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.4rem;padding:.5rem .6rem .8rem;">${palpHTML}</div></td></tr>` : ''}`;
   }).join('');
-  wrap.innerHTML = `<table class="rank-table"><thead><tr><th>#</th><th>Participante</th><th>Exatos</th><th>Acertos</th><th style="text-align:right">Pts</th></tr></thead><tbody>${rows}</tbody></table>`;
+
+  const aviso = !encerrada
+    ? `<div style="background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.25);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;font-size:.75rem;color:#ffd600;">⏳ Os palpites dos participantes serão revelados após todos os jogos da rodada encerrarem.</div>`
+    : `<div style="background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.2);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;font-size:.75rem;color:var(--green);">✅ Rodada encerrada! Clique em "ver palpites" para ver os palpites de cada participante.</div>`;
+
+  wrap.innerHTML = aviso + `<table class="rank-table"><thead><tr><th>#</th><th>Participante</th><th>Exatos</th><th>Acertos</th><th style="text-align:right">Pts</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function toggleRankEntry(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
 }
 
 async function loadRankingTemporada() {

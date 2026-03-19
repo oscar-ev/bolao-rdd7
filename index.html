@@ -546,12 +546,12 @@ function renderParticipantes(round) {
 
     let palpHTML = '';
     if (isMe && jogos.length) {
-      palpHTML = jogos.map((j, ji) => {
+      // Monta lista de palpites existentes independente do índice
+      const palItems = [];
+      jogos.forEach((j, ji) => {
         const id = ji + 1;
-        // FIX: use helper that tries both numeric and string keys
         const pal = getPalpite(p.palpites, id);
-        if (!pal) return '';
-
+        if (!pal) return;
         const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
         const cls = det === 'exact' ? 'exact' : det === 'winner' ? 'winner' : '';
         const badge = det === 'exact'
@@ -559,12 +559,30 @@ function renderParticipantes(round) {
           : det === 'winner'
           ? '<span class="pal-badge winner">1pt</span>'
           : '';
-        return `<div class="pal-item ${cls}">
+        palItems.push(`<div class="pal-item ${cls}">
           <span>${j.home} × ${j.away}</span>
           <span class="pal-score">${pal.home}–${pal.away}${badge}</span>
-        </div>`;
-      }).join('');
+        </div>`);
+      });
 
+      // Se não achou pelos índices sequenciais, tenta cruzar por posição dos palpites existentes
+      if (palItems.length === 0 && p.palpites) {
+        const palKeys = Object.keys(p.palpites).sort((a,b) => Number(a)-Number(b));
+        // Pega os últimos N jogos onde N = quantidade de palpites
+        const jogosComPalpite = jogos.slice(-palKeys.length);
+        palKeys.forEach((key, ki) => {
+          const pal = getPalpite(p.palpites, key);
+          if (!pal) return;
+          const jogo = jogosComPalpite[ki];
+          if (!jogo) return;
+          palItems.push(`<div class="pal-item">
+            <span>${jogo.home} × ${jogo.away}</span>
+            <span class="pal-score">${pal.home}–${pal.away}</span>
+          </div>`);
+        });
+      }
+
+      palpHTML = palItems.join('');
       if (!palpHTML) {
         palpHTML = '<span style="color:var(--muted);font-size:.78rem">Nenhum palpite encontrado nos jogos desta rodada.</span>';
       }

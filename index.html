@@ -378,7 +378,7 @@ async function savePalpite() {
     const id = idx + 1;
     const h = document.getElementById(`ph_${round}_${idx}`);
     const a = document.getElementById(`pa_${round}_${idx}`);
-    jogos_horarios[id] = j.utcDate;
+    jogos_horarios[id] = String(j.utcDate || '').replace(' ', 'T');
     if (h && !h.disabled && h.value !== '' && a && a.value !== '') {
       palpites[id] = { home: parseInt(h.value), away: parseInt(a.value) };
       temPalpite = true;

@@ -278,24 +278,41 @@ let scoresCache = {};
 let autoRefreshTimer = null;
 let emailVerificado = null;
 
-// ---- HELPER: parse date string safely (handles "2026-03-19 19:00:00" and ISO) ----
+// ---- HELPER: parse date string safely ----
 function parseDate(str) {
   if (!str) return new Date(0);
-  // Substitui espaço por T para garantir parsing correto em todos os browsers
-  return new Date(String(str).replace(' ', 'T'));
+  const dateStr = String(str).replace(' ', 'T');
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) {
+    const parts = String(str).split(/[- :]/);
+    if (parts.length >= 5) {
+      return new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4]);
+    }
+  }
+  return date;
 }
 
 // ---- HELPER: get palpite value safely ----
-// Handles keys stored as number or string (1, "1", etc.)
 function getPalpite(palpites, id) {
   if (!palpites) return null;
-  // Try numeric key first, then string key
-  let p = palpites[id] ?? palpites[String(id)] ?? palpites[Number(id)] ?? null;
-  if (!p) return null;
-  // Validate that home/away are actual numbers (not null/undefined)
-  if (p.home === null || p.home === undefined || p.away === null || p.away === undefined) return null;
-  if (isNaN(Number(p.home)) || isNaN(Number(p.away))) return null;
-  return p;
+  return palpites[id] ?? palpites[String(id)] ?? palpites[Number(id)] ?? null;
+}
+
+// ---- HELPER: garantir jogos carregados ----
+async function garantirJogosCarregados(round) {
+  if (!jogosCache[round]) {
+    try {
+      const resp = await fetch(`${SCRIPT_URL}?action=scores&matchday=${round}`);
+      const data = await resp.json();
+      if (data.ok && data.jogos) {
+        jogosCache[round] = data.jogos;
+        scoresCache[round] = data.jogos;
+      }
+    } catch(e) {
+      console.error('Erro ao carregar jogos:', e);
+    }
+  }
+  return jogosCache[round] || [];
 }
 
 // ---- ROUND NAV ----
@@ -385,9 +402,9 @@ async function savePalpite() {
     }
   });
 
-  // Valida se todos os jogos disponíveis foram palpitados
   const jogosDisponiveis = jogos.filter((j, idx) => {
     const h = document.getElementById(`ph_${round}_${idx}`);
+    const a = document.getElementById(`pa_${round}_${idx}`);
     return h && !h.disabled;
   });
 
@@ -433,24 +450,43 @@ async function savePalpite() {
 // ---- VERIFICAR EMAIL ----
 async function verificarEmail() {
   const email = document.getElementById('inp-email-check').value.trim().toLowerCase();
-  if (!email || !email.includes('@')) { showToast('⚠️ Informe um email válido!', true); return; }
+  if (!email || !email.includes('@')) { 
+    showToast('⚠️ Informe um email válido!', true); 
+    return; 
+  }
 
   document.getElementById('loading-email-check').classList.add('show');
   document.getElementById('email-check-result').textContent = '';
 
   try {
+    console.log('Verificando email:', email, 'Rodada:', currentRound);
+    
     const resp = await fetch(`${SCRIPT_URL}?action=meu_palpite&matchday=${currentRound}&email=${encodeURIComponent(email)}`);
     const data = await resp.json();
+    
+    console.log('Resposta da API:', data);
+    
     if (data.ok && data.palpite) {
       emailVerificado = email;
-      document.getElementById('email-check-result').innerHTML = `<span style="color:var(--green)">✅ Palpite encontrado para <strong>${data.palpite.nome} ${data.palpite.sobrenome}</strong>! Seus palpites estão desbloqueados.</span>`;
-      renderParticipantes(currentRound);
+      
+      console.log('Palpites encontrados:', data.palpite.palpites);
+      console.log('Jogos da rodada:', jogosCache[currentRound]);
+      
+      document.getElementById('email-check-result').innerHTML = 
+        `<span style="color:var(--green)">✅ Palpite encontrado para <strong>${data.palpite.nome} ${data.palpite.sobrenome}</strong>! Seus palpites estão desbloqueados.</span>`;
+      
+      await loadParticipantes(currentRound);
     } else {
       emailVerificado = null;
-      document.getElementById('email-check-result').innerHTML = `<span style="color:var(--red)">❌ Nenhum palpite encontrado para este email nesta rodada.</span>`;
+      document.getElementById('email-check-result').innerHTML = 
+        `<span style="color:var(--red)">❌ Nenhum palpite encontrado para este email nesta rodada.</span>`;
     }
-  } catch(e) { showToast('❌ Erro ao verificar', true); }
-  finally { document.getElementById('loading-email-check').classList.remove('show'); }
+  } catch(e) { 
+    console.error('Erro ao verificar email:', e);
+    showToast('❌ Erro ao verificar', true); 
+  } finally { 
+    document.getElementById('loading-email-check').classList.remove('show'); 
+  }
 }
 
 // ---- LOAD SCORES ----
@@ -494,37 +530,24 @@ function renderScores(round) {
 async function loadParticipantes(round) {
   document.getElementById('loading-list').classList.add('show');
   try {
-    // Garante que os jogos estejam carregados antes de renderizar palpites
-    if (!jogosCache[round]) {
-      const scoreResp = await fetch(`${SCRIPT_URL}?action=scores&matchday=${round}`);
-      const scoreData = await scoreResp.json();
-      if (scoreData.ok && scoreData.jogos && scoreData.jogos.length) {
-        jogosCache[round] = scoreData.jogos;
-        scoresCache[round] = scoreData.jogos;
-      }
-    }
-
+    await garantirJogosCarregados(round);
+    
     const resp = await fetch(`${SCRIPT_URL}?action=palpites&matchday=${round}`);
     const data = await resp.json();
+    
     if (data.ok) {
       participantesCache[round] = data.participantes || [];
-      // Fallback: usa jogosAPI da resposta de palpites se ainda sem jogos
-      if (!jogosCache[round] && data.jogosAPI && data.jogosAPI.length) {
-        jogosCache[round] = data.jogosAPI.map((j,i) => ({...j, id:i+1, matchday:round}));
-      }
       renderParticipantes(round);
     }
-  } catch(e) { showToast('❌ Erro ao carregar', true); }
-  finally { document.getElementById('loading-list').classList.remove('show'); }
+  } catch(e) { 
+    console.error('Erro ao carregar participantes:', e);
+    showToast('❌ Erro ao carregar', true); 
+  } finally { 
+    document.getElementById('loading-list').classList.remove('show'); 
+  }
 }
 
-function rodadaEncerrada(round) {
-  const jogos = jogosCache[round] || [];
-  if (!jogos.length) return false;
-  return jogos.every(j => new Date() >= parseDate(j.utcDate));
-}
-
-// ---- RENDER PARTICIPANTES (FIXED) ----
+// ---- RENDER PARTICIPANTES (CORRIGIDO) ----
 function renderParticipantes(round) {
   const list  = participantesCache[round] || [];
   const jogos = jogosCache[round] || [];
@@ -545,51 +568,42 @@ function renderParticipantes(round) {
     const isMe = (emailVerificado && (p.key === emailVerificado || p.email === emailVerificado));
 
     let palpHTML = '';
+    
     if (isMe && jogos.length) {
-      // Monta lista de palpites existentes independente do índice
-      const palItems = [];
       jogos.forEach((j, ji) => {
         const id = ji + 1;
-        const pal = getPalpite(p.palpites, id);
-        if (!pal) return;
-        const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
-        const cls = det === 'exact' ? 'exact' : det === 'winner' ? 'winner' : '';
-        const badge = det === 'exact'
-          ? '<span class="pal-badge exact">3pts</span>'
-          : det === 'winner'
-          ? '<span class="pal-badge winner">1pt</span>'
-          : '';
-        palItems.push(`<div class="pal-item ${cls}">
-          <span>${j.home} × ${j.away}</span>
-          <span class="pal-score">${pal.home}–${pal.away}${badge}</span>
-        </div>`);
+        let pal = null;
+        
+        if (p.palpites) {
+          pal = p.palpites[id] || p.palpites[String(id)] || p.palpites[Number(id)] || null;
+        }
+        
+        if (!pal && p.palpites && Array.isArray(p.palpites)) {
+          pal = p.palpites[ji];
+        }
+        
+        if (pal && pal.home !== undefined && pal.away !== undefined) {
+          const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
+          const cls = det === 'exact' ? 'exact' : det === 'winner' ? 'winner' : '';
+          const badge = det === 'exact'
+            ? '<span class="pal-badge exact">3pts</span>'
+            : det === 'winner'
+            ? '<span class="pal-badge winner">1pt</span>'
+            : '';
+          
+          palpHTML += `<div class="pal-item ${cls}">
+            <span>${j.home} × ${j.away}</span>
+            <span class="pal-score">${pal.home}–${pal.away}${badge}</span>
+          </div>`;
+        } else {
+          palpHTML += `<div class="pal-item">
+            <span>${j.home} × ${j.away}</span>
+            <span class="pal-score" style="color:var(--muted);">— × —</span>
+          </div>`;
+        }
       });
-
-      // Se não achou pelos índices sequenciais, tenta cruzar por posição dos palpites existentes
-      if (palItems.length === 0 && p.palpites) {
-        const palKeys = Object.keys(p.palpites).sort((a,b) => Number(a)-Number(b));
-        // Pega os últimos N jogos onde N = quantidade de palpites
-        const jogosComPalpite = jogos.slice(-palKeys.length);
-        palKeys.forEach((key, ki) => {
-          const pal = getPalpite(p.palpites, key);
-          if (!pal) return;
-          const jogo = jogosComPalpite[ki];
-          if (!jogo) return;
-          palItems.push(`<div class="pal-item">
-            <span>${jogo.home} × ${jogo.away}</span>
-            <span class="pal-score">${pal.home}–${pal.away}</span>
-          </div>`);
-        });
-      }
-
-      palpHTML = palItems.join('');
-      if (!palpHTML) {
-        palpHTML = '<span style="color:var(--muted);font-size:.78rem">Nenhum palpite encontrado nos jogos desta rodada.</span>';
-      }
     } else if (!isMe) {
       palpHTML = '<span style="color:var(--muted);font-size:.78rem">🔒 Oculto até a rodada encerrar.</span>';
-    } else {
-      palpHTML = '<span style="color:var(--muted);font-size:.78rem">Sem palpites registrados.</span>';
     }
 
     return `<div class="participant-entry">
@@ -605,7 +619,16 @@ function renderParticipantes(round) {
   }).join('');
 }
 
-function toggleEntry(idx) { document.getElementById(`ep-${idx}`).classList.toggle('open'); }
+function toggleEntry(idx) { 
+  const el = document.getElementById(`ep-${idx}`);
+  if (el) el.classList.toggle('open'); 
+}
+
+function rodadaEncerrada(round) {
+  const jogos = jogosCache[round] || [];
+  if (!jogos.length) return false;
+  return jogos.every(j => new Date() >= parseDate(j.utcDate));
+}
 
 // ---- RANKING ----
 async function loadRankingRodada(round) {
@@ -647,7 +670,6 @@ function renderRankingRodada(round) {
 
     const palpHTML = encerrada && jogos.length ? jogos.map((j,ji) => {
       const id = ji + 1;
-      // FIX: use helper for ranking too
       const pal = getPalpite(p.palpites, id);
       if (!pal) return '';
       const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;

@@ -115,7 +115,6 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--green);color:#000;font-weight:700;padding:.65rem 1.3rem;border-radius:100px;font-size:.85rem;z-index:999;transition:transform .3s ease;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 .toast.error{background:var(--red);color:#fff;}
-/* MODAL EMAIL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;}
 .modal-overlay.show{display:flex;}
 .modal-box{background:#16201a;border:1px solid #1f2d24;border-radius:14px;padding:2rem;width:90%;max-width:420px;position:relative;}
@@ -154,7 +153,6 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
 <!-- TAB: PALPITAR -->
 <div id="tab-palpite" class="tab-content active">
   <div class="card">
-    <!-- FORM NOVO PALPITE -->
     <div id="form-palpite">
       <h2>IDENTIFICAÇÃO</h2>
       <div class="form-grid-3">
@@ -193,7 +191,6 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
 
 <!-- TAB: PARTICIPANTES -->
 <div id="tab-resultados" class="tab-content">
-  <!-- Validação por email -->
   <div class="card" id="email-check-box">
     <h2>🔍 CONSULTAR MEUS PALPITES</h2>
     <p style="font-size:.78rem;color:var(--muted);margin-bottom:.8rem;">Digite seu email para ver seus palpites desbloqueados. Os demais ficam ocultos até a rodada encerrar.</p>
@@ -239,7 +236,7 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
 </div>
 <div class="toast" id="toast"></div>
 
-<!-- BOTÃO ADMIN (canto superior direito) -->
+<!-- BOTÃO ADMIN -->
 <div style="position:fixed;top:1rem;right:1rem;z-index:100;">
   <button onclick="abrirAdmin()" style="background:#16201a;border:1px solid #1f2d24;color:#5a7060;border-radius:50%;width:38px;height:38px;font-size:1rem;cursor:pointer;" title="Admin">⚙️</button>
 </div>
@@ -279,7 +276,20 @@ let participantesCache = {};
 let rankingRodadaCache = {};
 let scoresCache = {};
 let autoRefreshTimer = null;
-let emailVerificado = null; // email verificado na aba participantes
+let emailVerificado = null;
+
+// ---- HELPER: get palpite value safely ----
+// Handles keys stored as number or string (1, "1", etc.)
+function getPalpite(palpites, id) {
+  if (!palpites) return null;
+  // Try numeric key first, then string key
+  let p = palpites[id] ?? palpites[String(id)] ?? palpites[Number(id)] ?? null;
+  if (!p) return null;
+  // Validate that home/away are actual numbers (not null/undefined)
+  if (p.home === null || p.home === undefined || p.away === null || p.away === undefined) return null;
+  if (isNaN(Number(p.home)) || isNaN(Number(p.away))) return null;
+  return p;
+}
 
 // ---- ROUND NAV ----
 function changeRound(delta) {
@@ -353,16 +363,16 @@ async function savePalpite() {
   if (!jogos || !jogos.length) { showToast('⚠️ Carregue os jogos primeiro!', true); return; }
 
   const palpites = {};
+  let temPalpite = false;
   const jogos_ids = jogos.map((j,idx) => idx+1);
   const jogos_horarios = {};
-  let temPalpite = false;
 
   jogos.forEach((j, idx) => {
-    const id = idx+1;
+    const id = idx + 1;
     const h = document.getElementById(`ph_${round}_${idx}`);
     const a = document.getElementById(`pa_${round}_${idx}`);
-    jogos_horarios[idx] = j.utcDate;
-    if (h && !h.disabled && h.value !== '' && a.value !== '') {
+    jogos_horarios[id] = j.utcDate;
+    if (h && !h.disabled && h.value !== '' && a && a.value !== '') {
       palpites[id] = { home: parseInt(h.value), away: parseInt(a.value) };
       temPalpite = true;
     }
@@ -374,11 +384,11 @@ async function savePalpite() {
     return h && !h.disabled;
   });
 
-  const jogosSemPalpite = jogosDisponiveis.filter((j, idx) => {
+  const jogosSemPalpite = jogosDisponiveis.filter((j) => {
     const realIdx = jogos.indexOf(j);
     const h = document.getElementById(`ph_${round}_${realIdx}`);
     const a = document.getElementById(`pa_${round}_${realIdx}`);
-    return !h || h.value === '' || a.value === '';
+    return !h || h.value === '' || !a || a.value === '';
   });
 
   if (jogosDisponiveis.length > 0 && jogosSemPalpite.length > 0) {
@@ -401,7 +411,6 @@ async function savePalpite() {
     const data = await resp.json();
     if (data.ok) {
       showToast(`✅ Palpite de ${nome} salvo! Guarde seu email: ${email}`);
-      // Salva email no localStorage para facilitar próxima vez
       localStorage.setItem('bolao_email', email);
       localStorage.setItem('bolao_nome', nome);
       localStorage.setItem('bolao_sobrenome', sobrenome);
@@ -414,7 +423,7 @@ async function savePalpite() {
   finally { btn.disabled = false; loading.classList.remove('show'); }
 }
 
-// ---- VERIFICAR EMAIL NA ABA PARTICIPANTES ----
+// ---- VERIFICAR EMAIL ----
 async function verificarEmail() {
   const email = document.getElementById('inp-email-check').value.trim().toLowerCase();
   if (!email || !email.includes('@')) { showToast('⚠️ Informe um email válido!', true); return; }
@@ -497,11 +506,11 @@ function rodadaEncerrada(round) {
   return jogos.every(j => new Date() >= new Date(j.utcDate));
 }
 
+// ---- RENDER PARTICIPANTES (FIXED) ----
 function renderParticipantes(round) {
   const list  = participantesCache[round] || [];
   const jogos = jogosCache[round] || [];
   const wrap  = document.getElementById('participants-wrap');
-  const encerrada = rodadaEncerrada(round);
 
   if (!list.length) {
     wrap.innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>Nenhum palpite nessa rodada ainda.</p></div>';
@@ -515,30 +524,47 @@ function renderParticipantes(round) {
 
   wrap.innerHTML = aviso + list.map((p, idx) => {
     const hasPoints = p.pontos != null;
-    const isMe = (emailVerificado && p.key === emailVerificado);
+    const isMe = (emailVerificado && (p.key === emailVerificado || p.email === emailVerificado));
 
-    const palpHTML = isMe ? jogos.map((j, ji) => {
-      const id = ji+1;
-      const pal = p.palpites[id];
-      const det = p.detalhes ? p.detalhes[id] : null;
-      if (!pal || pal.home === null || isNaN(pal.home)) return '';
-      const cls = det==='exact'?'exact':det==='winner'?'winner':'';
-      const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
-      return `<div class="pal-item ${cls}">
-        <span>${j.home} × ${j.away}</span>
-        <span class="pal-score">${pal.home}–${pal.away}${badge}</span>
-      </div>`;
-    }).join('') : '<span style="color:var(--muted);font-size:.78rem">🔒 Oculto até a rodada encerrar.</span>';
+    let palpHTML = '';
+    if (isMe && jogos.length) {
+      palpHTML = jogos.map((j, ji) => {
+        const id = ji + 1;
+        // FIX: use helper that tries both numeric and string keys
+        const pal = getPalpite(p.palpites, id);
+        if (!pal) return '';
+
+        const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
+        const cls = det === 'exact' ? 'exact' : det === 'winner' ? 'winner' : '';
+        const badge = det === 'exact'
+          ? '<span class="pal-badge exact">3pts</span>'
+          : det === 'winner'
+          ? '<span class="pal-badge winner">1pt</span>'
+          : '';
+        return `<div class="pal-item ${cls}">
+          <span>${j.home} × ${j.away}</span>
+          <span class="pal-score">${pal.home}–${pal.away}${badge}</span>
+        </div>`;
+      }).join('');
+
+      if (!palpHTML) {
+        palpHTML = '<span style="color:var(--muted);font-size:.78rem">Nenhum palpite encontrado nos jogos desta rodada.</span>';
+      }
+    } else if (!isMe) {
+      palpHTML = '<span style="color:var(--muted);font-size:.78rem">🔒 Oculto até a rodada encerrar.</span>';
+    } else {
+      palpHTML = '<span style="color:var(--muted);font-size:.78rem">Sem palpites registrados.</span>';
+    }
 
     return `<div class="participant-entry">
       <div class="entry-header" onclick="toggleEntry(${idx})">
         <span class="entry-name">${p.nome} ${p.sobrenome}</span>
         <div style="display:flex;align-items:center;gap:.5rem">
-          ${hasPoints?`<div style="text-align:right"><div class="entry-pts">${p.pontos}</div><div class="entry-pts-label">pts</div></div>`:''}
-          ${isMe?'<span style="font-size:.65rem;background:rgba(0,200,83,.15);color:var(--green);border-radius:3px;padding:.15rem .4rem;font-weight:700;">VOCÊ</span>':''}
+          ${hasPoints ? `<div style="text-align:right"><div class="entry-pts">${p.pontos}</div><div class="entry-pts-label">pts</div></div>` : ''}
+          ${isMe ? '<span style="font-size:.65rem;background:rgba(0,200,83,.15);color:var(--green);border-radius:3px;padding:.15rem .4rem;font-weight:700;">VOCÊ</span>' : ''}
         </div>
       </div>
-      <div class="entry-palpites" id="ep-${idx}">${palpHTML||'<span style="color:var(--muted);font-size:.78rem">Sem palpites.</span>'}</div>
+      <div class="entry-palpites${isMe ? ' open' : ''}" id="ep-${idx}">${palpHTML}</div>
     </div>`;
   }).join('');
 }
@@ -549,12 +575,10 @@ function toggleEntry(idx) { document.getElementById(`ep-${idx}`).classList.toggl
 async function loadRankingRodada(round) {
   document.getElementById('loading-rank').classList.add('show');
   try {
-    // Carrega jogos se necessário (para mostrar nomes dos times nos palpites)
     if (!jogosCache[round]) await loadJogos(round);
     const resp = await fetch(`${SCRIPT_URL}?action=ranking_rodada&matchday=${round}`);
     const data = await resp.json();
     if (data.ok) {
-      // Enriquece ranking com palpites dos participantes
       const palResp = await fetch(`${SCRIPT_URL}?action=palpites&matchday=${round}`);
       const palData = await palResp.json();
       if (palData.ok) {
@@ -582,15 +606,15 @@ function renderRankingRodada(round) {
   const rows = ranking.map((p,i) => {
     const cls = i===0?'g':i===1?'s':i===2?'b':'';
     const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1;
-    const ex = p.detalhes?Object.values(p.detalhes).filter(v=>v==='exact').length:0;
-    const wi = p.detalhes?Object.values(p.detalhes).filter(v=>v==='winner').length:0;
+    const ex = p.detalhes ? Object.values(p.detalhes).filter(v=>v==='exact').length : 0;
+    const wi = p.detalhes ? Object.values(p.detalhes).filter(v=>v==='winner').length : 0;
 
-    // Palpites expandíveis no ranking (só após encerrar)
     const palpHTML = encerrada && jogos.length ? jogos.map((j,ji) => {
-      const id = ji+1;
-      const pal = p.palpites ? p.palpites[id] : null;
-      const det = p.detalhes ? p.detalhes[id] : null;
+      const id = ji + 1;
+      // FIX: use helper for ranking too
+      const pal = getPalpite(p.palpites, id);
       if (!pal) return '';
+      const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
       const palCls = det==='exact'?'exact':det==='winner'?'winner':'';
       const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
       return `<div class="pal-item ${palCls}"><span>${j.home} × ${j.away}</span><span class="pal-score">${pal.home}–${pal.away}${badge}</span></div>`;
@@ -686,7 +710,7 @@ function showToast(msg, isError=false) {
   const t = document.getElementById('toast');
   t.textContent=msg; t.className='toast'+(isError?' error':'');
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  setTimeout(()=>t.classList.remove('show'), 3500);
 }
 
 // ---- ADMIN ----
@@ -752,7 +776,6 @@ async function adminResetTemporada() {
 document.getElementById('admin-overlay').addEventListener('click',function(e){ if(e.target===this)fecharAdmin(); });
 
 // ---- INIT ----
-// Restaura email salvo
 const savedEmail = localStorage.getItem('bolao_email');
 const savedNome  = localStorage.getItem('bolao_nome');
 const savedSob   = localStorage.getItem('bolao_sobrenome');

@@ -33,17 +33,12 @@ h1 span{color:var(--green);}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;}
 .card h2{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em;color:var(--green);margin-bottom:.8rem;}
 .card h3{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.08em;color:var(--gold);margin-bottom:.8rem;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem;}
 .form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin-bottom:1rem;}
 label{display:block;font-size:.68rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:.25rem;}
 input[type="text"],input[type="email"]{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;padding:.55rem .8rem;outline:none;transition:border-color .2s;}
 input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
-.user-bar{display:flex;align-items:center;justify-content:space-between;background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.2);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;}
-.user-bar .user-info{font-size:.85rem;}
-.user-bar .user-name{font-weight:700;color:var(--green);}
-.user-bar .user-email{font-size:.72rem;color:var(--muted);}
 .matches-grid{display:grid;gap:.6rem;}
-.match-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;transition:border-color .2s;}
+.match-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;}
 .match-row.locked{opacity:.5;}
 .match-row.has-result{border-color:rgba(0,200,83,.2);}
 .team-name{font-size:.82rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -57,7 +52,7 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
 .vs{color:var(--muted);font-size:.65rem;}
 .match-meta{font-size:.6rem;color:var(--muted);text-align:center;letter-spacing:.04em;}
 .lock-tag{font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,23,68,.12);color:var(--red);border-radius:3px;padding:.1rem .35rem;}
-.result-tag{font-size:.6rem;font-weight:700;font-family:'Bebas Neue',sans-serif;letter-spacing:.05em;color:var(--green);}
+.result-tag{font-size:.6rem;font-weight:700;font-family:'Bebas Neue',sans-serif;color:var(--green);}
 .live-grid{display:grid;gap:.4rem;}
 .live-row{display:grid;grid-template-columns:1fr 70px 1fr;align-items:center;gap:.4rem;background:var(--surface);border-radius:6px;padding:.4rem .8rem;font-size:.8rem;}
 .live-home{text-align:right;font-weight:500;}
@@ -119,12 +114,11 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
 .modal-overlay.show{display:flex;}
 .modal-box{background:#16201a;border:1px solid #1f2d24;border-radius:14px;padding:2rem;width:90%;max-width:420px;position:relative;}
 .modal-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.08em;color:var(--green);margin-bottom:1rem;}
-@media(max-width:600px){.form-grid,.form-grid-3{grid-template-columns:1fr;}.match-row{padding:.55rem .6rem;}.team-name{font-size:.75rem;}}
+@media(max-width:600px){.form-grid-3{grid-template-columns:1fr;}.match-row{padding:.55rem .6rem;}.team-name{font-size:.75rem;}}
 </style>
 </head>
 <body>
 <div class="container">
-
 <header>
   <div class="badge">⚽ Brasileirão 2026 · Série A</div>
   <h1>BOLÃO <span>Brasileirão</span></h1>
@@ -150,50 +144,41 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
   <button class="tab" onclick="switchTab('ranking')">🏆 Ranking</button>
 </div>
 
-<!-- TAB: PALPITAR -->
 <div id="tab-palpite" class="tab-content active">
   <div class="card">
-    <div id="form-palpite">
-      <h2>IDENTIFICAÇÃO</h2>
-      <div class="form-grid-3">
-        <div><label>Nome</label><input type="text" id="inp-nome" placeholder="Ex: João"></div>
-        <div><label>Sobrenome</label><input type="text" id="inp-sobrenome" placeholder="Ex: Silva"></div>
-        <div><label>Email</label><input type="email" id="inp-email" placeholder="seu@email.com"></div>
-      </div>
-      <h2>PALPITES — RODADA <span id="palpite-round-label">7</span></h2>
-      <p style="font-size:.72rem;color:var(--muted);margin-bottom:.7rem;">🔒 Jogos bloqueados automaticamente no horário de início. Guarde seu email para consultar seus palpites.</p>
-      <div class="matches-grid" id="matches-grid">
-        <div class="empty-state"><div class="icon">⏳</div><p>Carregando jogos...</p></div>
-      </div>
-      <div class="loading-bar" id="loading-save"><div class="spinner"></div> Salvando...</div>
-      <div class="actions">
-        <button class="btn btn-secondary" onclick="clearForm()">Limpar</button>
-        <button class="btn btn-primary" id="btn-salvar" onclick="savePalpite()">💾 Salvar Palpite</button>
-      </div>
+    <h2>IDENTIFICAÇÃO</h2>
+    <div class="form-grid-3">
+      <div><label>Nome</label><input type="text" id="inp-nome" placeholder="Ex: João"></div>
+      <div><label>Sobrenome</label><input type="text" id="inp-sobrenome" placeholder="Ex: Silva"></div>
+      <div><label>Email</label><input type="email" id="inp-email" placeholder="seu@email.com"></div>
+    </div>
+    <h2>PALPITES — RODADA <span id="palpite-round-label">7</span></h2>
+    <p style="font-size:.72rem;color:var(--muted);margin-bottom:.7rem;">🔒 Jogos bloqueados no horário de início. Guarde seu email para consultar.</p>
+    <div class="matches-grid" id="matches-grid">
+      <div class="empty-state"><div class="icon">⏳</div><p>Carregando jogos...</p></div>
+    </div>
+    <div class="loading-bar" id="loading-save"><div class="spinner"></div> Salvando...</div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="clearForm()">Limpar</button>
+      <button class="btn btn-primary" id="btn-salvar" onclick="savePalpite()">💾 Salvar Palpite</button>
     </div>
   </div>
 </div>
 
-<!-- TAB: AO VIVO -->
 <div id="tab-ao-vivo" class="tab-content">
   <div class="card">
     <h3><span class="dot-live"></span> PLACARES — RODADA <span id="live-round-label">7</span></h3>
-    <div class="loading-bar" id="loading-scores"><div class="spinner"></div> Buscando da API...</div>
-    <div class="live-grid" id="live-grid">
-      <div class="empty-state"><div class="icon">📡</div><p>Clique em atualizar para buscar os placares.</p></div>
-    </div>
+    <div class="loading-bar" id="loading-scores"><div class="spinner"></div> Buscando...</div>
+    <div class="live-grid" id="live-grid"><div class="empty-state"><div class="icon">📡</div><p>Clique em atualizar.</p></div></div>
     <div class="update-row" id="update-row"></div>
-    <div class="actions">
-      <button class="btn btn-secondary" onclick="loadScores()">🔄 Atualizar</button>
-    </div>
+    <div class="actions"><button class="btn btn-secondary" onclick="loadScores()">🔄 Atualizar</button></div>
   </div>
 </div>
 
-<!-- TAB: PARTICIPANTES -->
 <div id="tab-resultados" class="tab-content">
-  <div class="card" id="email-check-box">
+  <div class="card">
     <h2>🔍 CONSULTAR MEUS PALPITES</h2>
-    <p style="font-size:.78rem;color:var(--muted);margin-bottom:.8rem;">Digite seu email para ver seus palpites desbloqueados. Os demais ficam ocultos até a rodada encerrar.</p>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:.8rem;">Digite seu email para ver seus palpites. Os demais ficam ocultos até a rodada encerrar.</p>
     <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
       <div style="flex:1;min-width:200px">
         <label>Seu Email</label>
@@ -206,14 +191,10 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
     <div class="loading-bar" id="loading-email-check"><div class="spinner"></div> Verificando...</div>
     <div id="email-check-result" style="margin-top:.6rem;font-size:.8rem;"></div>
   </div>
-
-  <div class="loading-bar" id="loading-list"><div class="spinner"></div> Carregando participantes...</div>
-  <div id="participants-wrap">
-    <div class="empty-state"><div class="icon">🎯</div><p>Nenhum palpite nessa rodada ainda.</p></div>
-  </div>
+  <div class="loading-bar" id="loading-list"><div class="spinner"></div> Carregando...</div>
+  <div id="participants-wrap"><div class="empty-state"><div class="icon">🎯</div><p>Nenhum palpite ainda.</p></div></div>
 </div>
 
-<!-- TAB: RANKING -->
 <div id="tab-ranking" class="tab-content">
   <div class="sub-tab-bar">
     <button class="sub-tab active" onclick="switchSubTab('rodada')">Esta Rodada</button>
@@ -221,27 +202,21 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
   </div>
   <div id="rank-rodada">
     <div class="loading-bar" id="loading-rank"><div class="spinner"></div> Calculando...</div>
-    <div id="ranking-rodada-wrap">
-      <div class="empty-state"><div class="icon">🏆</div><p>Sem dados ainda.</p></div>
-    </div>
+    <div id="ranking-rodada-wrap"><div class="empty-state"><div class="icon">🏆</div><p>Sem dados ainda.</p></div></div>
   </div>
   <div id="rank-temporada" style="display:none">
     <div class="loading-bar" id="loading-temp"><div class="spinner"></div> Carregando...</div>
-    <div id="ranking-temporada-wrap">
-      <div class="empty-state"><div class="icon">📊</div><p>Nenhum dado ainda.</p></div>
-    </div>
+    <div id="ranking-temporada-wrap"><div class="empty-state"><div class="icon">📊</div><p>Nenhum dado ainda.</p></div></div>
   </div>
 </div>
-
 </div>
+
 <div class="toast" id="toast"></div>
 
-<!-- BOTÃO ADMIN -->
 <div style="position:fixed;top:1rem;right:1rem;z-index:100;">
   <button onclick="abrirAdmin()" style="background:#16201a;border:1px solid #1f2d24;color:#5a7060;border-radius:50%;width:38px;height:38px;font-size:1rem;cursor:pointer;" title="Admin">⚙️</button>
 </div>
 
-<!-- MODAL ADMIN -->
 <div class="modal-overlay" id="admin-overlay">
   <div class="modal-box">
     <button onclick="fecharAdmin()" style="position:absolute;top:.8rem;right:.8rem;background:none;border:none;color:#5a7060;font-size:1.2rem;cursor:pointer;">✕</button>
@@ -268,7 +243,7 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxm3y_u_wTgSVsjFmwyCzh-RBVT9LMCcGxwo2rXaELDtfWdu9X99wCrWloJntzN5svi/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLE98fqokR3P86BUYcIsdW_zrnjJSH-y9d1loCtKdIJtR54D6QU6eeRkUSgegG_1ld/exec';
 
 let currentRound = 7;
 let jogosCache = {};
@@ -278,77 +253,38 @@ let scoresCache = {};
 let autoRefreshTimer = null;
 let emailVerificado = null;
 
-// ---- HELPER: parse date string safely ----
 function parseDate(str) {
   if (!str) return new Date(0);
-  const dateStr = String(str).replace(' ', 'T');
-  const date = new Date(dateStr);
-  if (isNaN(date.getTime())) {
-    const parts = String(str).split(/[- :]/);
-    if (parts.length >= 5) {
-      return new Date(parts[0], parts[1]-1, parts[2], parts[3], parts[4]);
-    }
-  }
-  return date;
+  const s = String(str).replace(' ', 'T');
+  const d = new Date(s);
+  return isNaN(d) ? new Date(0) : d;
 }
 
-// ---- HELPER: get palpite value safely (CORRIGIDO) ----
-function getPalpite(palpites, id) {
+// Lê palpite de forma segura — aceita chave numérica ou string
+function lerPalpite(palpites, id) {
   if (!palpites) return null;
-  
-  let palpite = null;
-  
-  if (typeof palpites === 'object') {
-    palpite = palpites[id] ?? palpites[String(id)] ?? palpites[Number(id)] ?? null;
-  }
-  
-  if (!palpite && Array.isArray(palpites) && palpites[id-1]) {
-    palpite = palpites[id-1];
-  }
-  
-  if (palpite && (palpite.home !== undefined || palpite.away !== undefined)) {
-    return {
-      home: palpite.home !== null ? Number(palpite.home) : null,
-      away: palpite.away !== null ? Number(palpite.away) : null
-    };
-  }
-  
-  return null;
+  const p = palpites[id] ?? palpites[String(id)] ?? null;
+  if (!p) return null;
+  const h = Number(p.home);
+  const a = Number(p.away);
+  if (isNaN(h) || isNaN(a)) return null;
+  return { home: h, away: a };
 }
 
-// ---- HELPER: garantir jogos carregados ----
-async function garantirJogosCarregados(round) {
-  if (!jogosCache[round]) {
-    try {
-      const resp = await fetch(`${SCRIPT_URL}?action=scores&matchday=${round}`);
-      const data = await resp.json();
-      if (data.ok && data.jogos) {
-        jogosCache[round] = data.jogos;
-        scoresCache[round] = data.jogos;
-      }
-    } catch(e) {
-      console.error('Erro ao carregar jogos:', e);
-    }
-  }
-  return jogosCache[round] || [];
-}
-
-// ---- ROUND NAV ----
 function changeRound(delta) {
   const nr = currentRound + delta;
   if (nr < 1 || nr > 38) return;
   currentRound = nr;
-  document.getElementById('round-num').textContent = nr;
-  document.getElementById('palpite-round-label').textContent = nr;
-  document.getElementById('live-round-label').textContent = nr;
+  ['round-num','palpite-round-label','live-round-label'].forEach(id => {
+    document.getElementById(id).textContent = nr;
+  });
   loadJogos(nr);
-  const active = document.querySelector('.tab-content.active');
-  if (active.id === 'tab-resultados') { emailVerificado = null; loadParticipantes(nr); }
-  if (active.id === 'tab-ranking') loadRankingRodada(nr);
-  if (active.id === 'tab-ao-vivo') renderScores(nr);
+  const activeTab = document.querySelector('.tab-content.active');
+  if (activeTab.id === 'tab-resultados') { emailVerificado = null; loadParticipantes(nr); }
+  if (activeTab.id === 'tab-ranking')    loadRankingRodada(nr);
+  if (activeTab.id === 'tab-ao-vivo')    renderScores(nr);
 }
 
-// ---- JOGOS ----
 async function loadJogos(round) {
   if (jogosCache[round]) { renderMatchGrid(round); return; }
   try {
@@ -358,7 +294,6 @@ async function loadJogos(round) {
       jogosCache[round] = data.jogos;
       scoresCache[round] = data.jogos;
       renderMatchGrid(round);
-      if (document.getElementById('tab-ao-vivo').classList.contains('active')) renderScores(round);
     }
   } catch(e) { console.error(e); }
 }
@@ -366,13 +301,12 @@ async function loadJogos(round) {
 function renderMatchGrid(round) {
   const jogos = jogosCache[round];
   if (!jogos || !jogos.length) {
-    document.getElementById('matches-grid').innerHTML = '<div class="empty-state"><div class="icon">📅</div><p>Jogos ainda não disponíveis.</p></div>';
+    document.getElementById('matches-grid').innerHTML = '<div class="empty-state"><div class="icon">📅</div><p>Jogos não disponíveis.</p></div>';
     return;
   }
   document.getElementById('matches-grid').innerHTML = jogos.map((j, idx) => {
     const locked = new Date() >= parseDate(j.utcDate);
     const hasResult = j.status === 'FINISHED' && j.scoreHome !== null;
-    const resultTag = hasResult ? `<span class="result-tag">${j.scoreHome}–${j.scoreAway}</span>` : '';
     const dt = parseDate(j.utcDate);
     const label = dt.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     return `<div class="match-row${locked?' locked':''}${hasResult?' has-result':''}">
@@ -384,14 +318,13 @@ function renderMatchGrid(round) {
           <input type="number" min="0" max="20" id="pa_${round}_${idx}" placeholder="–" ${locked?'disabled':''}>
         </div>
         <div class="match-meta">${label} ${locked?'<span class="lock-tag">🔒</span>':''}</div>
-        ${resultTag?`<div class="match-meta" style="color:var(--green)">${resultTag} FIM</div>`:''}
+        ${hasResult?`<div class="match-meta" style="color:var(--green)">${j.scoreHome}–${j.scoreAway} FIM</div>`:''}
       </div>
       <div class="team-name">${j.away}</div>
     </div>`;
   }).join('');
 }
 
-// ---- SAVE PALPITE (CORRIGIDO) ----
 async function savePalpite() {
   const nome      = document.getElementById('inp-nome').value.trim();
   const sobrenome = document.getElementById('inp-sobrenome').value.trim();
@@ -404,162 +337,85 @@ async function savePalpite() {
   const jogos = jogosCache[round];
   if (!jogos || !jogos.length) { showToast('⚠️ Carregue os jogos primeiro!', true); return; }
 
+  // Monta palpites e verifica campos obrigatórios
   const palpites = {};
-  let temPalpite = false;
   const jogos_ids = [];
   const jogos_horarios = {};
+  const faltando = [];
 
   jogos.forEach((j, idx) => {
     const id = idx + 1;
     jogos_ids.push(id);
     jogos_horarios[id] = String(j.utcDate || '').replace(' ', 'T');
-  });
-
-  jogos.forEach((j, idx) => {
-    const id = idx + 1;
     const h = document.getElementById(`ph_${round}_${idx}`);
     const a = document.getElementById(`pa_${round}_${idx}`);
-    
     if (h && !h.disabled) {
-      const homeValue = h.value ? parseInt(h.value, 10) : null;
-      const awayValue = a.value ? parseInt(a.value, 10) : null;
-      
-      if (homeValue !== null && awayValue !== null && !isNaN(homeValue) && !isNaN(awayValue)) {
-        palpites[id] = { 
-          home: homeValue, 
-          away: awayValue 
-        };
-        temPalpite = true;
-        console.log(`Palpite para jogo ${id}: ${homeValue} x ${awayValue}`);
+      if (h.value === '' || a.value === '') {
+        faltando.push(`${j.home} x ${j.away}`);
+      } else {
+        palpites[id] = { home: parseInt(h.value, 10), away: parseInt(a.value, 10) };
       }
     }
   });
 
-  const jogosDisponiveis = jogos.filter((j, idx) => {
-    const h = document.getElementById(`ph_${round}_${idx}`);
-    return h && !h.disabled;
-  });
-
-  const jogosSemPalpite = jogosDisponiveis.filter((j) => {
-    const realIdx = jogos.indexOf(j);
-    const h = document.getElementById(`ph_${round}_${realIdx}`);
-    const a = document.getElementById(`pa_${round}_${realIdx}`);
-    return h && (!h.value || h.value === '') || a && (!a.value || a.value === '');
-  });
-
-  if (jogosDisponiveis.length > 0 && jogosSemPalpite.length > 0) {
-    const nomes = jogosSemPalpite.map(j => `${j.home} x ${j.away}`).join(', ');
-    showToast(`⚠️ Palpite todos os jogos disponíveis! Faltam: ${nomes}`, true);
+  if (faltando.length > 0) {
+    showToast(`⚠️ Preencha todos os jogos! Faltam: ${faltando.join(', ')}`, true);
     return;
   }
 
-  if (!temPalpite) { 
-    showToast('⚠️ Nenhum palpite válido foi preenchido!', true); 
-    return; 
+  if (Object.keys(palpites).length === 0) {
+    showToast('⚠️ Todos os jogos estão bloqueados!', true);
+    return;
   }
 
   const btn = document.getElementById('btn-salvar');
   const loading = document.getElementById('loading-save');
-  btn.disabled = true; 
-  loading.classList.add('show');
+  btn.disabled = true; loading.classList.add('show');
 
   try {
-    console.log('Enviando palpites:', {
-      action: 'palpite',
-      matchday: round,
-      key: email,
-      nome,
-      sobrenome,
-      email,
-      palpites,
-      jogos_ids,
-      jogos_horarios
-    });
-
     const resp = await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        action: 'palpite', 
-        matchday: round, 
-        key: email, 
-        nome, 
-        sobrenome, 
-        email, 
-        palpites, 
-        jogos_ids, 
-        jogos_horarios 
-      })
+      body: JSON.stringify({ action:'palpite', matchday:round, key:email, nome, sobrenome, email, palpites, jogos_ids, jogos_horarios })
     });
-
-    showToast(`✅ Palpite de ${nome} enviado! Verifique na aba Participantes.`);
-    
-    localStorage.setItem('bolao_email', email);
-    localStorage.setItem('bolao_nome', nome);
-    localStorage.setItem('bolao_sobrenome', sobrenome);
-    
-    clearForm();
-    delete participantesCache[round];
-    
-    if (document.getElementById('tab-resultados').classList.contains('active')) {
-      setTimeout(() => loadParticipantes(round), 2000);
+    const data = await resp.json();
+    if (data.ok) {
+      showToast(`✅ Palpite de ${nome} salvo!`);
+      localStorage.setItem('bolao_email', email);
+      localStorage.setItem('bolao_nome', nome);
+      localStorage.setItem('bolao_sobrenome', sobrenome);
+      clearForm();
+      delete participantesCache[round];
+    } else {
+      showToast('❌ ' + (data.error || 'Erro ao salvar'), true);
     }
-    
-  } catch(e) { 
-    console.error('Erro ao salvar:', e);
-    showToast('❌ Erro de conexão: ' + e.message, true); 
-  } finally { 
-    btn.disabled = false; 
-    loading.classList.remove('show'); 
-  }
+  } catch(e) { showToast('❌ Erro de conexão', true); }
+  finally { btn.disabled = false; loading.classList.remove('show'); }
 }
 
-// ---- VERIFICAR EMAIL ----
 async function verificarEmail() {
   const email = document.getElementById('inp-email-check').value.trim().toLowerCase();
-  if (!email || !email.includes('@')) { 
-    showToast('⚠️ Informe um email válido!', true); 
-    return; 
-  }
+  if (!email || !email.includes('@')) { showToast('⚠️ Email inválido!', true); return; }
 
   document.getElementById('loading-email-check').classList.add('show');
   document.getElementById('email-check-result').textContent = '';
 
   try {
-    console.log('Verificando email:', email, 'Rodada:', currentRound);
-    
     const resp = await fetch(`${SCRIPT_URL}?action=meu_palpite&matchday=${currentRound}&email=${encodeURIComponent(email)}`);
     const data = await resp.json();
-    
-    console.log('Resposta da API:', data);
-    
     if (data.ok && data.palpite) {
       emailVerificado = email;
-      
-      console.log('Palpites encontrados:', data.palpite.palpites);
-      console.log('Jogos da rodada:', jogosCache[currentRound]);
-      
-      document.getElementById('email-check-result').innerHTML = 
+      document.getElementById('email-check-result').innerHTML =
         `<span style="color:var(--green)">✅ Palpite encontrado para <strong>${data.palpite.nome} ${data.palpite.sobrenome}</strong>! Seus palpites estão desbloqueados.</span>`;
-      
       await loadParticipantes(currentRound);
     } else {
       emailVerificado = null;
-      document.getElementById('email-check-result').innerHTML = 
+      document.getElementById('email-check-result').innerHTML =
         `<span style="color:var(--red)">❌ Nenhum palpite encontrado para este email nesta rodada.</span>`;
     }
-  } catch(e) { 
-    console.error('Erro ao verificar email:', e);
-    showToast('❌ Erro ao verificar', true); 
-  } finally { 
-    document.getElementById('loading-email-check').classList.remove('show'); 
-  }
+  } catch(e) { showToast('❌ Erro ao verificar', true); }
+  finally { document.getElementById('loading-email-check').classList.remove('show'); }
 }
 
-// ---- LOAD SCORES ----
 async function loadScores() {
   const round = currentRound;
   document.getElementById('loading-scores').classList.add('show');
@@ -572,112 +428,70 @@ async function loadScores() {
       renderScores(round);
       renderMatchGrid(round);
       document.getElementById('update-row').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
-    } else { showToast('⚠️ ' + (data.error||'Sem dados'), true); }
-  } catch(e) { showToast('❌ Erro ao buscar placares', true); }
+    } else showToast('⚠️ ' + (data.error||'Sem dados'), true);
+  } catch(e) { showToast('❌ Erro', true); }
   finally { document.getElementById('loading-scores').classList.remove('show'); }
 }
 
 function renderScores(round) {
   const jogos = scoresCache[round] || jogosCache[round];
-  if (!jogos || !jogos.length) {
-    document.getElementById('live-grid').innerHTML = '<div class="empty-state"><div class="icon">📡</div><p>Clique em Atualizar.</p></div>';
-    return;
-  }
+  if (!jogos || !jogos.length) { document.getElementById('live-grid').innerHTML = '<div class="empty-state"><div class="icon">📡</div><p>Clique em Atualizar.</p></div>'; return; }
   document.getElementById('live-grid').innerHTML = jogos.map(j => {
     const ft = j.status==='FINISHED', live = j.status==='IN_PLAY'||j.status==='PAUSED';
     const score = j.scoreHome!==null&&j.scoreAway!==null ? `${j.scoreHome}–${j.scoreAway}` : '·–·';
     const cls = ft?'ft':live?'live':'ns';
     const label = ft?'FIM':live?'● AO VIVO':parseDate(j.utcDate).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    return `<div class="live-row">
-      <span class="live-home">${j.home}</span>
-      <div><div class="live-score-val ${cls}">${score}</div><div class="live-status ${cls}">${label}</div></div>
-      <span>${j.away}</span>
-    </div>`;
+    return `<div class="live-row"><span class="live-home">${j.home}</span><div><div class="live-score-val ${cls}">${score}</div><div class="live-status ${cls}">${label}</div></div><span>${j.away}</span></div>`;
   }).join('');
 }
 
-// ---- LOAD PARTICIPANTES ----
 async function loadParticipantes(round) {
   document.getElementById('loading-list').classList.add('show');
   try {
-    await garantirJogosCarregados(round);
-    
+    if (!jogosCache[round]) await loadJogos(round);
     const resp = await fetch(`${SCRIPT_URL}?action=palpites&matchday=${round}`);
     const data = await resp.json();
-    
     if (data.ok) {
       participantesCache[round] = data.participantes || [];
       renderParticipantes(round);
     }
-  } catch(e) { 
-    console.error('Erro ao carregar participantes:', e);
-    showToast('❌ Erro ao carregar', true); 
-  } finally { 
-    document.getElementById('loading-list').classList.remove('show'); 
-  }
+  } catch(e) { showToast('❌ Erro ao carregar', true); }
+  finally { document.getElementById('loading-list').classList.remove('show'); }
 }
 
-// ---- RENDER PARTICIPANTES (CORRIGIDO) ----
+function rodadaEncerrada(round) {
+  const jogos = jogosCache[round] || [];
+  return jogos.length > 0 && jogos.every(j => new Date() >= parseDate(j.utcDate));
+}
+
 function renderParticipantes(round) {
   const list  = participantesCache[round] || [];
   const jogos = jogosCache[round] || [];
   const wrap  = document.getElementById('participants-wrap');
 
-  if (!list.length) {
-    wrap.innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>Nenhum palpite nessa rodada ainda.</p></div>';
-    return;
-  }
+  if (!list.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>Nenhum palpite ainda.</p></div>'; return; }
 
   const aviso = !emailVerificado
-    ? `<div style="background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.25);border-radius:8px;padding:.7rem 1rem;margin-bottom:1rem;font-size:.78rem;color:#ffd600;">
-        🔒 Verifique seu email acima para ver seus palpites. Os palpites dos outros participantes só ficam visíveis no Ranking após os jogos encerrarem.
-      </div>` : '';
+    ? `<div style="background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.25);border-radius:8px;padding:.7rem 1rem;margin-bottom:1rem;font-size:.78rem;color:#ffd600;">🔒 Verifique seu email acima para ver seus palpites.</div>` : '';
 
   wrap.innerHTML = aviso + list.map((p, idx) => {
+    const isMe = emailVerificado && (p.key === emailVerificado || p.email === emailVerificado);
     const hasPoints = p.pontos != null;
-    const isMe = (emailVerificado && (p.key === emailVerificado || p.email === emailVerificado));
 
     let palpHTML = '';
-    
-    if (isMe && jogos.length) {
+    if (isMe) {
+      // Mostra apenas jogos que têm palpite válido
       jogos.forEach((j, ji) => {
         const id = ji + 1;
-        let pal = null;
-        
-        if (p.palpites) {
-          pal = p.palpites[id] || p.palpites[String(id)] || p.palpites[Number(id)] || null;
-        }
-        
-        if (!pal && p.palpites && Array.isArray(p.palpites)) {
-          pal = p.palpites[ji];
-        }
-        
-        if (pal && pal.home !== undefined && pal.away !== undefined) {
-          const home = Number(pal.home);
-          const away = Number(pal.away);
-          
-          if (!isNaN(home) && !isNaN(away)) {
-            const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
-            const cls = det === 'exact' ? 'exact' : det === 'winner' ? 'winner' : '';
-            const badge = det === 'exact'
-              ? '<span class="pal-badge exact">3pts</span>'
-              : det === 'winner'
-              ? '<span class="pal-badge winner">1pt</span>'
-              : '';
-            
-            palpHTML += `<div class="pal-item ${cls}">
-              <span>${j.home} × ${j.away}</span>
-              <span class="pal-score">${home}–${away}${badge}</span>
-            </div>`;
-          }
-        } else {
-          palpHTML += `<div class="pal-item">
-            <span>${j.home} × ${j.away}</span>
-            <span class="pal-score" style="color:var(--muted);">— × —</span>
-          </div>`;
-        }
+        const pal = lerPalpite(p.palpites, id);
+        if (!pal) return; // pula jogos sem palpite (bloqueados)
+        const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
+        const cls = det==='exact'?'exact':det==='winner'?'winner':'';
+        const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
+        palpHTML += `<div class="pal-item ${cls}"><span>${j.home} × ${j.away}</span><span class="pal-score">${pal.home}–${pal.away}${badge}</span></div>`;
       });
-    } else if (!isMe) {
+      if (!palpHTML) palpHTML = '<span style="color:var(--muted);font-size:.78rem">Sem palpites válidos registrados.</span>';
+    } else {
       palpHTML = '<span style="color:var(--muted);font-size:.78rem">🔒 Oculto até a rodada encerrar.</span>';
     }
 
@@ -685,46 +499,36 @@ function renderParticipantes(round) {
       <div class="entry-header" onclick="toggleEntry(${idx})">
         <span class="entry-name">${p.nome} ${p.sobrenome}</span>
         <div style="display:flex;align-items:center;gap:.5rem">
-          ${hasPoints ? `<div style="text-align:right"><div class="entry-pts">${p.pontos}</div><div class="entry-pts-label">pts</div></div>` : ''}
-          ${isMe ? '<span style="font-size:.65rem;background:rgba(0,200,83,.15);color:var(--green);border-radius:3px;padding:.15rem .4rem;font-weight:700;">VOCÊ</span>' : ''}
+          ${hasPoints?`<div style="text-align:right"><div class="entry-pts">${p.pontos}</div><div class="entry-pts-label">pts</div></div>`:''}
+          ${isMe?'<span style="font-size:.65rem;background:rgba(0,200,83,.15);color:var(--green);border-radius:3px;padding:.15rem .4rem;font-weight:700;">VOCÊ</span>':''}
         </div>
       </div>
-      <div class="entry-palpites${isMe ? ' open' : ''}" id="ep-${idx}">${palpHTML}</div>
+      <div class="entry-palpites${isMe?' open':''}" id="ep-${idx}">${palpHTML}</div>
     </div>`;
   }).join('');
 }
 
-function toggleEntry(idx) { 
-  const el = document.getElementById(`ep-${idx}`);
-  if (el) el.classList.toggle('open'); 
-}
+function toggleEntry(idx) { document.getElementById(`ep-${idx}`).classList.toggle('open'); }
 
-function rodadaEncerrada(round) {
-  const jogos = jogosCache[round] || [];
-  if (!jogos.length) return false;
-  return jogos.every(j => new Date() >= parseDate(j.utcDate));
-}
-
-// ---- RANKING ----
 async function loadRankingRodada(round) {
   document.getElementById('loading-rank').classList.add('show');
   try {
     if (!jogosCache[round]) await loadJogos(round);
-    const resp = await fetch(`${SCRIPT_URL}?action=ranking_rodada&matchday=${round}`);
-    const data = await resp.json();
-    if (data.ok) {
-      const palResp = await fetch(`${SCRIPT_URL}?action=palpites&matchday=${round}`);
-      const palData = await palResp.json();
-      if (palData.ok) {
-        const palMap = {};
-        (palData.participantes||[]).forEach(p => palMap[p.key] = p.palpites);
-        data.ranking.forEach(p => { if (!p.palpites) p.palpites = palMap[p.key] || {}; });
-      }
-      rankingRodadaCache[round] = data.ranking;
+    const [rankResp, palResp] = await Promise.all([
+      fetch(`${SCRIPT_URL}?action=ranking_rodada&matchday=${round}`),
+      fetch(`${SCRIPT_URL}?action=palpites&matchday=${round}`)
+    ]);
+    const rankData = await rankResp.json();
+    const palData  = await palResp.json();
+    if (rankData.ok) {
+      const palMap = {};
+      if (palData.ok) (palData.participantes||[]).forEach(p => { palMap[p.key] = p.palpites; });
+      rankData.ranking.forEach(p => { if (!p.palpites) p.palpites = palMap[p.key] || {}; });
+      rankingRodadaCache[round] = rankData.ranking;
       renderRankingRodada(round);
     } else {
       document.getElementById('ranking-rodada-wrap').innerHTML =
-        '<div class="empty-state"><div class="icon">🏆</div><p>' + (data.error||'Sem dados ainda.') + '</p></div>';
+        `<div class="empty-state"><div class="icon">🏆</div><p>${rankData.error||'Sem dados ainda.'}</p></div>`;
     }
   } catch(e) {}
   finally { document.getElementById('loading-rank').classList.remove('show'); }
@@ -733,7 +537,7 @@ async function loadRankingRodada(round) {
 function renderRankingRodada(round) {
   const ranking = rankingRodadaCache[round] || [];
   const wrap = document.getElementById('ranking-rodada-wrap');
-  if (!ranking.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">🏆</div><p>Sem dados ainda. Os placares precisam ser calculados.</p></div>'; return; }
+  if (!ranking.length) { wrap.innerHTML = '<div class="empty-state"><div class="icon">🏆</div><p>Sem dados ainda.</p></div>'; return; }
   const jogos = jogosCache[round] || [];
   const encerrada = rodadaEncerrada(round);
 
@@ -743,18 +547,21 @@ function renderRankingRodada(round) {
     const ex = p.detalhes ? Object.values(p.detalhes).filter(v=>v==='exact').length : 0;
     const wi = p.detalhes ? Object.values(p.detalhes).filter(v=>v==='winner').length : 0;
 
-    const palpHTML = encerrada && jogos.length ? jogos.map((j,ji) => {
-      const id = ji + 1;
-      const pal = getPalpite(p.palpites, id);
-      if (!pal) return '';
-      const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
-      const palCls = det==='exact'?'exact':det==='winner'?'winner':'';
-      const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
-      return `<div class="pal-item ${palCls}"><span>${j.home} × ${j.away}</span><span class="pal-score">${pal.home}–${pal.away}${badge}</span></div>`;
-    }).join('') : '';
+    let palpHTML = '';
+    if (encerrada && jogos.length) {
+      jogos.forEach((j,ji) => {
+        const id = ji+1;
+        const pal = lerPalpite(p.palpites, id);
+        if (!pal) return;
+        const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
+        const palCls = det==='exact'?'exact':det==='winner'?'winner':'';
+        const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
+        palpHTML += `<div class="pal-item ${palCls}"><span>${j.home} × ${j.away}</span><span class="pal-score">${pal.home}–${pal.away}${badge}</span></div>`;
+      });
+    }
 
     const expandBtn = encerrada && palpHTML
-      ? `<button onclick="toggleRankEntry('rk-${i}')" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:5px;padding:.2rem .6rem;font-size:.7rem;cursor:pointer;margin-left:.5rem;">ver palpites</button>` : '';
+      ? `<button onclick="toggleRankEntry('rk-${i}',this)" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:5px;padding:.2rem .6rem;font-size:.7rem;cursor:pointer;margin-left:.5rem;">ver palpites</button>` : '';
 
     return `<tr>
       <td class="rank-pos ${cls}">${medal}</td>
@@ -763,19 +570,22 @@ function renderRankingRodada(round) {
       <td style="color:var(--gold);text-align:center" class="rank-sub">${wi}×1</td>
       <td class="rank-pts">${p.pontos}</td>
     </tr>
-    ${palpHTML ? `<tr id="rk-${i}" style="display:none"><td colspan="5"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.4rem;padding:.5rem .6rem .8rem;">${palpHTML}</div></td></tr>` : ''}`;
+    ${palpHTML?`<tr id="rk-${i}" style="display:none"><td colspan="5"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.4rem;padding:.5rem .6rem .8rem;">${palpHTML}</div></td></tr>`:''}`;
   }).join('');
 
   const aviso = !encerrada
-    ? `<div style="background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.25);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;font-size:.75rem;color:#ffd600;">⏳ Os palpites dos participantes serão revelados após todos os jogos da rodada encerrarem.</div>`
-    : `<div style="background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.2);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;font-size:.75rem;color:var(--green);">✅ Rodada encerrada! Clique em "ver palpites" para ver os palpites de cada participante.</div>`;
+    ? `<div style="background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.25);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;font-size:.75rem;color:#ffd600;">⏳ Palpites revelados após todos os jogos encerrarem.</div>`
+    : `<div style="background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.2);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;font-size:.75rem;color:var(--green);">✅ Rodada encerrada! Clique em "ver palpites".</div>`;
 
   wrap.innerHTML = aviso + `<table class="rank-table"><thead><tr><th>#</th><th>Participante</th><th>Exatos</th><th>Acertos</th><th style="text-align:right">Pts</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-function toggleRankEntry(id) {
+function toggleRankEntry(id, btn) {
   const el = document.getElementById(id);
-  if (el) el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
+  if (!el) return;
+  const show = el.style.display === 'none';
+  el.style.display = show ? 'table-row' : 'none';
+  if (btn) btn.textContent = show ? 'ocultar' : 'ver palpites';
 }
 
 async function loadRankingTemporada() {
@@ -799,7 +609,6 @@ function renderRankingTemporada(ranking) {
   wrap.innerHTML = `<table class="rank-table"><thead><tr><th>#</th><th>Participante</th><th>Rodadas</th><th>Melhor</th><th style="text-align:right">Total</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-// ---- CLEAR FORM ----
 function clearForm() {
   const jogos = jogosCache[currentRound] || [];
   jogos.forEach((j,idx) => {
@@ -809,14 +618,12 @@ function clearForm() {
   });
 }
 
-// ---- TABS ----
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById(`tab-${tab}`).classList.add('active');
   document.querySelectorAll('.tab').forEach(t => { if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes(tab)) t.classList.add('active'); });
-  if (tab==='ao-vivo') { loadScores(); startAutoRefresh(); }
-  else stopAutoRefresh();
+  if (tab==='ao-vivo') { loadScores(); startAutoRefresh(); } else stopAutoRefresh();
   if (tab==='resultados') loadParticipantes(currentRound);
   if (tab==='ranking') loadRankingRodada(currentRound);
   if (tab==='palpite') loadJogos(currentRound);
@@ -831,14 +638,9 @@ function switchSubTab(sub) {
   if (sub==='rodada') loadRankingRodada(currentRound);
 }
 
-// ---- AUTO REFRESH ----
-function startAutoRefresh() {
-  stopAutoRefresh();
-  autoRefreshTimer = setInterval(() => { if(document.getElementById('tab-ao-vivo').classList.contains('active')) loadScores(); }, 5*60*1000);
-}
+function startAutoRefresh() { stopAutoRefresh(); autoRefreshTimer = setInterval(() => { if(document.getElementById('tab-ao-vivo').classList.contains('active')) loadScores(); }, 5*60*1000); }
 function stopAutoRefresh() { if(autoRefreshTimer){ clearInterval(autoRefreshTimer); autoRefreshTimer=null; } }
 
-// ---- TOAST ----
 function showToast(msg, isError=false) {
   const t = document.getElementById('toast');
   t.textContent=msg; t.className='toast'+(isError?' error':'');
@@ -846,98 +648,26 @@ function showToast(msg, isError=false) {
   setTimeout(()=>t.classList.remove('show'), 3500);
 }
 
-// ---- ADMIN ----
 const ADMIN_SENHA = '17dejaneiro';
-function abrirAdmin() {
-  document.getElementById('admin-overlay').classList.add('show');
-  document.getElementById('admin-login').style.display='block';
-  document.getElementById('admin-painel').style.display='none';
-  document.getElementById('admin-erro').style.display='none';
-  document.getElementById('admin-senha').value='';
-  document.getElementById('admin-rodada-label').textContent=currentRound;
-}
+function abrirAdmin() { document.getElementById('admin-overlay').classList.add('show'); document.getElementById('admin-login').style.display='block'; document.getElementById('admin-painel').style.display='none'; document.getElementById('admin-erro').style.display='none'; document.getElementById('admin-senha').value=''; document.getElementById('admin-rodada-label').textContent=currentRound; }
 function fecharAdmin() { document.getElementById('admin-overlay').classList.remove('show'); }
-function verificarSenha() {
-  if(document.getElementById('admin-senha').value===ADMIN_SENHA) {
-    document.getElementById('admin-login').style.display='none';
-    document.getElementById('admin-painel').style.display='block';
-  } else { document.getElementById('admin-erro').style.display='block'; }
-}
-function adminMsg(msg,erro=false) {
-  const el=document.getElementById('admin-msg');
-  el.textContent=msg; el.style.color=erro?'var(--red)':'var(--green)';
-}
-async function adminAtualizarPlacares() {
-  adminMsg('Buscando...');
-  try {
-    const resp=await fetch(SCRIPT_URL+'?action=scores&matchday='+currentRound);
-    const data=await resp.json();
-    if(data.ok){ jogosCache[currentRound]=data.jogos; scoresCache[currentRound]=data.jogos; renderScores(currentRound); renderMatchGrid(currentRound); adminMsg('✅ Placares atualizados!'); }
-    else adminMsg('❌ '+data.error,true);
-  } catch(e){ adminMsg('❌ Erro',true); }
-}
-async function adminCalcularPontos() {
-  adminMsg('Calculando...');
-  try {
-    const resp=await fetch(SCRIPT_URL+'?action=ranking_rodada&matchday='+currentRound);
-    const data=await resp.json();
-    if(data.ok){ rankingRodadaCache[currentRound]=data.ranking; renderRankingRodada(currentRound); delete participantesCache[currentRound]; adminMsg('✅ Calculado!'); }
-    else adminMsg('❌ '+data.error,true);
-  } catch(e){ adminMsg('❌ Erro',true); }
-}
-async function adminResetRodada() {
-  if(!confirm('Resetar palpites da Rodada '+currentRound+'? Irreversível!')) return;
-  adminMsg('Resetando...');
-  try {
-    const resp=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'reset_rodada',matchday:currentRound})});
-    const data=await resp.json();
-    if(data.ok){ delete participantesCache[currentRound]; delete rankingRodadaCache[currentRound]; renderParticipantes(currentRound); adminMsg('✅ Rodada resetada!'); }
-    else adminMsg('❌ '+data.error,true);
-  } catch(e){ adminMsg('❌ Erro',true); }
-}
-async function adminResetTemporada() {
-  if(!confirm('Resetar TODA A TEMPORADA? Irreversível!')) return;
-  if(!confirm('Tem CERTEZA?')) return;
-  adminMsg('Resetando...');
-  try {
-    const resp=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'reset_temporada'})});
-    const data=await resp.json();
-    if(data.ok){ participantesCache={}; rankingRodadaCache={}; jogosCache={}; scoresCache={}; adminMsg('✅ Temporada resetada!'); }
-    else adminMsg('❌ '+data.error,true);
-  } catch(e){ adminMsg('❌ Erro',true); }
-}
+function verificarSenha() { if(document.getElementById('admin-senha').value===ADMIN_SENHA){ document.getElementById('admin-login').style.display='none'; document.getElementById('admin-painel').style.display='block'; } else document.getElementById('admin-erro').style.display='block'; }
+function adminMsg(msg,erro=false){ const el=document.getElementById('admin-msg'); el.textContent=msg; el.style.color=erro?'var(--red)':'var(--green)'; }
+async function adminAtualizarPlacares(){ adminMsg('Buscando...'); try{ const r=await fetch(SCRIPT_URL+'?action=scores&matchday='+currentRound); const d=await r.json(); if(d.ok){ jogosCache[currentRound]=d.jogos; scoresCache[currentRound]=d.jogos; renderScores(currentRound); renderMatchGrid(currentRound); adminMsg('✅ Atualizado!'); }else adminMsg('❌ '+d.error,true); }catch(e){ adminMsg('❌ Erro',true); } }
+async function adminCalcularPontos(){ adminMsg('Calculando...'); try{ const r=await fetch(SCRIPT_URL+'?action=ranking_rodada&matchday='+currentRound); const d=await r.json(); if(d.ok){ rankingRodadaCache[currentRound]=d.ranking; renderRankingRodada(currentRound); delete participantesCache[currentRound]; adminMsg('✅ Calculado!'); }else adminMsg('❌ '+d.error,true); }catch(e){ adminMsg('❌ Erro',true); } }
+async function adminResetRodada(){ if(!confirm('Resetar Rodada '+currentRound+'? Irreversível!')) return; adminMsg('Resetando...'); try{ const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'reset_rodada',matchday:currentRound})}); const d=await r.json(); if(d.ok){ delete participantesCache[currentRound]; delete rankingRodadaCache[currentRound]; renderParticipantes(currentRound); adminMsg('✅ Resetada!'); }else adminMsg('❌ '+d.error,true); }catch(e){ adminMsg('❌ Erro',true); } }
+async function adminResetTemporada(){ if(!confirm('Resetar TODA A TEMPORADA?')) return; if(!confirm('Tem CERTEZA?')) return; adminMsg('Resetando...'); try{ const r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'reset_temporada'})}); const d=await r.json(); if(d.ok){ participantesCache={}; rankingRodadaCache={}; jogosCache={}; scoresCache={}; adminMsg('✅ Temporada resetada!'); }else adminMsg('❌ '+d.error,true); }catch(e){ adminMsg('❌ Erro',true); } }
 document.getElementById('admin-overlay').addEventListener('click',function(e){ if(e.target===this)fecharAdmin(); });
 
-// ---- TEST API FUNCTION ----
-async function testarAPI() {
-  console.log('Testando conexão com a API...');
-  try {
-    const resp = await fetch(`${SCRIPT_URL}?action=scores&matchday=${currentRound}`);
-    const data = await resp.json();
-    console.log('Resposta da API:', data);
-    if (data.ok) {
-      showToast('✅ API conectada com sucesso!');
-    } else {
-      showToast('⚠️ API respondeu mas com erro', true);
-    }
-  } catch(e) {
-    console.error('Erro ao testar API:', e);
-    showToast('❌ Erro ao conectar com API', true);
-  }
-}
-
-// ---- INIT ----
+// INIT
 const savedEmail = localStorage.getItem('bolao_email');
 const savedNome  = localStorage.getItem('bolao_nome');
 const savedSob   = localStorage.getItem('bolao_sobrenome');
-if (savedEmail) { document.getElementById('inp-email').value = savedEmail; document.getElementById('inp-email-check').value = savedEmail; }
-if (savedNome)  document.getElementById('inp-nome').value = savedNome;
-if (savedSob)   document.getElementById('inp-sobrenome').value = savedSob;
+if (savedEmail) { document.getElementById('inp-email').value=savedEmail; document.getElementById('inp-email-check').value=savedEmail; }
+if (savedNome)  document.getElementById('inp-nome').value=savedNome;
+if (savedSob)   document.getElementById('inp-sobrenome').value=savedSob;
 
 loadJogos(currentRound);
-
-// Expõe função de teste no console
-window.testarAPI = testarAPI;
 </script>
 </body>
 </html>

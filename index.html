@@ -487,12 +487,23 @@ function renderScores(round) {
 async function loadParticipantes(round) {
   document.getElementById('loading-list').classList.add('show');
   try {
+    // Garante que os jogos estejam carregados antes de renderizar palpites
+    if (!jogosCache[round]) {
+      const scoreResp = await fetch(`${SCRIPT_URL}?action=scores&matchday=${round}`);
+      const scoreData = await scoreResp.json();
+      if (scoreData.ok && scoreData.jogos && scoreData.jogos.length) {
+        jogosCache[round] = scoreData.jogos;
+        scoresCache[round] = scoreData.jogos;
+      }
+    }
+
     const resp = await fetch(`${SCRIPT_URL}?action=palpites&matchday=${round}`);
     const data = await resp.json();
     if (data.ok) {
       participantesCache[round] = data.participantes || [];
-      if (data.jogosAPI && data.jogosAPI.length) {
-        if (!jogosCache[round]) jogosCache[round] = data.jogosAPI.map((j,i) => ({...j, id:i+1, matchday:round}));
+      // Fallback: usa jogosAPI da resposta de palpites se ainda sem jogos
+      if (!jogosCache[round] && data.jogosAPI && data.jogosAPI.length) {
+        jogosCache[round] = data.jogosAPI.map((j,i) => ({...j, id:i+1, matchday:round}));
       }
       renderParticipantes(round);
     }

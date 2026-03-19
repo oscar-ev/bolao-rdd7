@@ -278,6 +278,13 @@ let scoresCache = {};
 let autoRefreshTimer = null;
 let emailVerificado = null;
 
+// ---- HELPER: parse date string safely (handles "2026-03-19 19:00:00" and ISO) ----
+function parseDate(str) {
+  if (!str) return new Date(0);
+  // Substitui espaço por T para garantir parsing correto em todos os browsers
+  return new Date(String(str).replace(' ', 'T'));
+}
+
 // ---- HELPER: get palpite value safely ----
 // Handles keys stored as number or string (1, "1", etc.)
 function getPalpite(palpites, id) {
@@ -328,10 +335,10 @@ function renderMatchGrid(round) {
     return;
   }
   document.getElementById('matches-grid').innerHTML = jogos.map((j, idx) => {
-    const locked = new Date() >= new Date(j.utcDate);
+    const locked = new Date() >= parseDate(j.utcDate);
     const hasResult = j.status === 'FINISHED' && j.scoreHome !== null;
     const resultTag = hasResult ? `<span class="result-tag">${j.scoreHome}–${j.scoreAway}</span>` : '';
-    const dt = new Date(j.utcDate);
+    const dt = parseDate(j.utcDate);
     const label = dt.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     return `<div class="match-row${locked?' locked':''}${hasResult?' has-result':''}">
       <div class="team-name team-home">${j.home}</div>
@@ -474,7 +481,7 @@ function renderScores(round) {
     const ft = j.status==='FINISHED', live = j.status==='IN_PLAY'||j.status==='PAUSED';
     const score = j.scoreHome!==null&&j.scoreAway!==null ? `${j.scoreHome}–${j.scoreAway}` : '·–·';
     const cls = ft?'ft':live?'live':'ns';
-    const label = ft?'FIM':live?'● AO VIVO':new Date(j.utcDate).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const label = ft?'FIM':live?'● AO VIVO':parseDate(j.utcDate).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     return `<div class="live-row">
       <span class="live-home">${j.home}</span>
       <div><div class="live-score-val ${cls}">${score}</div><div class="live-status ${cls}">${label}</div></div>
@@ -514,7 +521,7 @@ async function loadParticipantes(round) {
 function rodadaEncerrada(round) {
   const jogos = jogosCache[round] || [];
   if (!jogos.length) return false;
-  return jogos.every(j => new Date() >= new Date(j.utcDate));
+  return jogos.every(j => new Date() >= parseDate(j.utcDate));
 }
 
 // ---- RENDER PARTICIPANTES (FIXED) ----

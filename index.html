@@ -292,10 +292,28 @@ function parseDate(str) {
   return date;
 }
 
-// ---- HELPER: get palpite value safely ----
+// ---- HELPER: get palpite value safely (CORRIGIDO) ----
 function getPalpite(palpites, id) {
   if (!palpites) return null;
-  return palpites[id] ?? palpites[String(id)] ?? palpites[Number(id)] ?? null;
+  
+  let palpite = null;
+  
+  if (typeof palpites === 'object') {
+    palpite = palpites[id] ?? palpites[String(id)] ?? palpites[Number(id)] ?? null;
+  }
+  
+  if (!palpite && Array.isArray(palpites) && palpites[id-1]) {
+    palpite = palpites[id-1];
+  }
+  
+  if (palpite && (palpite.home !== undefined || palpite.away !== undefined)) {
+    return {
+      home: palpite.home !== null ? Number(palpite.home) : null,
+      away: palpite.away !== null ? Number(palpite.away) : null
+    };
+  }
+  
+  return null;
 }
 
 // ---- HELPER: garantir jogos carregados ----
@@ -373,7 +391,7 @@ function renderMatchGrid(round) {
   }).join('');
 }
 
-// ---- SAVE PALPITE ----
+// ---- SAVE PALPITE (CORRIGIDO) ----
 async function savePalpite() {
   const nome      = document.getElementById('inp-nome').value.trim();
   const sobrenome = document.getElementById('inp-sobrenome').value.trim();
@@ -388,23 +406,37 @@ async function savePalpite() {
 
   const palpites = {};
   let temPalpite = false;
-  const jogos_ids = jogos.map((j,idx) => idx+1);
+  const jogos_ids = [];
   const jogos_horarios = {};
+
+  jogos.forEach((j, idx) => {
+    const id = idx + 1;
+    jogos_ids.push(id);
+    jogos_horarios[id] = String(j.utcDate || '').replace(' ', 'T');
+  });
 
   jogos.forEach((j, idx) => {
     const id = idx + 1;
     const h = document.getElementById(`ph_${round}_${idx}`);
     const a = document.getElementById(`pa_${round}_${idx}`);
-    jogos_horarios[id] = String(j.utcDate || '').replace(' ', 'T');
-    if (h && !h.disabled && h.value !== '' && a && a.value !== '') {
-      palpites[id] = { home: parseInt(h.value), away: parseInt(a.value) };
-      temPalpite = true;
+    
+    if (h && !h.disabled) {
+      const homeValue = h.value ? parseInt(h.value, 10) : null;
+      const awayValue = a.value ? parseInt(a.value, 10) : null;
+      
+      if (homeValue !== null && awayValue !== null && !isNaN(homeValue) && !isNaN(awayValue)) {
+        palpites[id] = { 
+          home: homeValue, 
+          away: awayValue 
+        };
+        temPalpite = true;
+        console.log(`Palpite para jogo ${id}: ${homeValue} x ${awayValue}`);
+      }
     }
   });
 
   const jogosDisponiveis = jogos.filter((j, idx) => {
     const h = document.getElementById(`ph_${round}_${idx}`);
-    const a = document.getElementById(`pa_${round}_${idx}`);
     return h && !h.disabled;
   });
 
@@ -412,7 +444,7 @@ async function savePalpite() {
     const realIdx = jogos.indexOf(j);
     const h = document.getElementById(`ph_${round}_${realIdx}`);
     const a = document.getElementById(`pa_${round}_${realIdx}`);
-    return !h || h.value === '' || !a || a.value === '';
+    return h && (!h.value || h.value === '') || a && (!a.value || a.value === '');
   });
 
   if (jogosDisponiveis.length > 0 && jogosSemPalpite.length > 0) {
@@ -421,30 +453,68 @@ async function savePalpite() {
     return;
   }
 
-  if (!temPalpite) { showToast('⚠️ Nenhum jogo disponível para palpitar!', true); return; }
+  if (!temPalpite) { 
+    showToast('⚠️ Nenhum palpite válido foi preenchido!', true); 
+    return; 
+  }
 
   const btn = document.getElementById('btn-salvar');
   const loading = document.getElementById('loading-save');
-  btn.disabled = true; loading.classList.add('show');
+  btn.disabled = true; 
+  loading.classList.add('show');
 
   try {
+    console.log('Enviando palpites:', {
+      action: 'palpite',
+      matchday: round,
+      key: email,
+      nome,
+      sobrenome,
+      email,
+      palpites,
+      jogos_ids,
+      jogos_horarios
+    });
+
     const resp = await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'palpite', matchday:round, key:email, nome, sobrenome, email, palpites, jogos_ids, jogos_horarios })
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        action: 'palpite', 
+        matchday: round, 
+        key: email, 
+        nome, 
+        sobrenome, 
+        email, 
+        palpites, 
+        jogos_ids, 
+        jogos_horarios 
+      })
     });
-    const data = await resp.json();
-    if (data.ok) {
-      showToast(`✅ Palpite de ${nome} salvo! Guarde seu email: ${email}`);
-      localStorage.setItem('bolao_email', email);
-      localStorage.setItem('bolao_nome', nome);
-      localStorage.setItem('bolao_sobrenome', sobrenome);
-      clearForm();
-      delete participantesCache[round];
-    } else {
-      showToast('❌ ' + (data.error || 'Erro ao salvar'), true);
+
+    showToast(`✅ Palpite de ${nome} enviado! Verifique na aba Participantes.`);
+    
+    localStorage.setItem('bolao_email', email);
+    localStorage.setItem('bolao_nome', nome);
+    localStorage.setItem('bolao_sobrenome', sobrenome);
+    
+    clearForm();
+    delete participantesCache[round];
+    
+    if (document.getElementById('tab-resultados').classList.contains('active')) {
+      setTimeout(() => loadParticipantes(round), 2000);
     }
-  } catch(e) { showToast('❌ Erro de conexão', true); }
-  finally { btn.disabled = false; loading.classList.remove('show'); }
+    
+  } catch(e) { 
+    console.error('Erro ao salvar:', e);
+    showToast('❌ Erro de conexão: ' + e.message, true); 
+  } finally { 
+    btn.disabled = false; 
+    loading.classList.remove('show'); 
+  }
 }
 
 // ---- VERIFICAR EMAIL ----
@@ -583,18 +653,23 @@ function renderParticipantes(round) {
         }
         
         if (pal && pal.home !== undefined && pal.away !== undefined) {
-          const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
-          const cls = det === 'exact' ? 'exact' : det === 'winner' ? 'winner' : '';
-          const badge = det === 'exact'
-            ? '<span class="pal-badge exact">3pts</span>'
-            : det === 'winner'
-            ? '<span class="pal-badge winner">1pt</span>'
-            : '';
+          const home = Number(pal.home);
+          const away = Number(pal.away);
           
-          palpHTML += `<div class="pal-item ${cls}">
-            <span>${j.home} × ${j.away}</span>
-            <span class="pal-score">${pal.home}–${pal.away}${badge}</span>
-          </div>`;
+          if (!isNaN(home) && !isNaN(away)) {
+            const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
+            const cls = det === 'exact' ? 'exact' : det === 'winner' ? 'winner' : '';
+            const badge = det === 'exact'
+              ? '<span class="pal-badge exact">3pts</span>'
+              : det === 'winner'
+              ? '<span class="pal-badge winner">1pt</span>'
+              : '';
+            
+            palpHTML += `<div class="pal-item ${cls}">
+              <span>${j.home} × ${j.away}</span>
+              <span class="pal-score">${home}–${away}${badge}</span>
+            </div>`;
+          }
         } else {
           palpHTML += `<div class="pal-item">
             <span>${j.home} × ${j.away}</span>
@@ -833,6 +908,24 @@ async function adminResetTemporada() {
 }
 document.getElementById('admin-overlay').addEventListener('click',function(e){ if(e.target===this)fecharAdmin(); });
 
+// ---- TEST API FUNCTION ----
+async function testarAPI() {
+  console.log('Testando conexão com a API...');
+  try {
+    const resp = await fetch(`${SCRIPT_URL}?action=scores&matchday=${currentRound}`);
+    const data = await resp.json();
+    console.log('Resposta da API:', data);
+    if (data.ok) {
+      showToast('✅ API conectada com sucesso!');
+    } else {
+      showToast('⚠️ API respondeu mas com erro', true);
+    }
+  } catch(e) {
+    console.error('Erro ao testar API:', e);
+    showToast('❌ Erro ao conectar com API', true);
+  }
+}
+
 // ---- INIT ----
 const savedEmail = localStorage.getItem('bolao_email');
 const savedNome  = localStorage.getItem('bolao_nome');
@@ -842,6 +935,9 @@ if (savedNome)  document.getElementById('inp-nome').value = savedNome;
 if (savedSob)   document.getElementById('inp-sobrenome').value = savedSob;
 
 loadJogos(currentRound);
+
+// Expõe função de teste no console
+window.testarAPI = testarAPI;
 </script>
 </body>
 </html>

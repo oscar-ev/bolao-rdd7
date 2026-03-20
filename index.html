@@ -289,7 +289,13 @@ function changeRound(delta) {
 }
 
 async function loadJogos(round) {
-  if (jogosCache[round]) { renderMatchGrid(round); return; }
+  if (jogosCache[round]) { 
+    // Só re-renderiza se o grid estiver vazio (sem inputs com valores)
+    const grid = document.getElementById('matches-grid');
+    const hasInputs = grid && grid.querySelectorAll('input[type="number"]').length > 0;
+    if (!hasInputs) renderMatchGrid(round);
+    return; 
+  }
   try {
     const resp = await fetch(`${SCRIPT_URL}?action=scores&matchday=${round}`);
     const data = await resp.json();
@@ -353,10 +359,18 @@ async function savePalpite() {
     const h = document.getElementById(`ph_${round}_${idx}`);
     const a = document.getElementById(`pa_${round}_${idx}`);
     if (h && !h.disabled) {
-      if (h.value === '' || a.value === '') {
+      const hVal = String(h.value).trim();
+      const aVal = String(a.value).trim();
+      if (hVal === '' || aVal === '') {
         faltando.push(`${j.home} x ${j.away}`);
       } else {
-        palpites[id] = { home: parseInt(h.value, 10), away: parseInt(a.value, 10) };
+        const hNum = parseInt(hVal, 10);
+        const aNum = parseInt(aVal, 10);
+        if (!isNaN(hNum) && !isNaN(aNum)) {
+          palpites[id] = { home: hNum, away: aNum };
+        } else {
+          faltando.push(`${j.home} x ${j.away}`);
+        }
       }
     }
   });

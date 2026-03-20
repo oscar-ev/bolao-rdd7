@@ -243,7 +243,7 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--green);}
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTMYIT-XSKAWdaQ4nJ5oQaPS9XoTi2wR7H3xkki6wAaz1uo1ca7BzsGjAU2OHK1Uw7/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmPIOg9ZEfRLYS-7P3zmVWNUZV3gprWdvX_Lr2KwEx0PkAN68YMPFvaWHG__Wi1J-G/exec';
 
 let currentRound = 7;
 let jogosCache = {};
@@ -265,9 +265,12 @@ function lerPalpite(palpites, id) {
   if (!palpites) return null;
   const p = palpites[id] ?? palpites[String(id)] ?? null;
   if (!p) return null;
+  // Rejeita se home ou away for null, undefined, string vazia ou NaN
+  if (p.home === null || p.home === undefined || p.home === '' ||
+      p.away === null || p.away === undefined || p.away === '') return null;
   const h = Number(p.home);
   const a = Number(p.away);
-  if (isNaN(h) || isNaN(a)) return null;
+  if (isNaN(h) || isNaN(a) || h < 0 || a < 0) return null;
   return { home: h, away: a };
 }
 
@@ -404,6 +407,8 @@ async function verificarEmail() {
     const data = await resp.json();
     if (data.ok && data.palpite) {
       emailVerificado = email;
+      console.log('PALPITES RECEBIDOS:', JSON.stringify(data.palpite.palpites));
+      console.log('JOGOS CACHE:', JSON.stringify((jogosCache[currentRound]||[]).map((j,i)=>({idx:i,id:i+1,home:j.home,away:j.away}))));
       document.getElementById('email-check-result').innerHTML =
         `<span style="color:var(--green)">✅ Palpite encontrado para <strong>${data.palpite.nome} ${data.palpite.sobrenome}</strong>! Seus palpites estão desbloqueados.</span>`;
       await loadParticipantes(currentRound);

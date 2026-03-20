@@ -375,6 +375,8 @@ async function savePalpite() {
   const loading = document.getElementById('loading-save');
   btn.disabled = true; loading.classList.add('show');
 
+  console.log('ENVIANDO PALPITES:', JSON.stringify(palpites));
+
   try {
     const resp = await fetch(SCRIPT_URL, {
       method: 'POST',

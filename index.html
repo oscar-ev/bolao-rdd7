@@ -346,7 +346,18 @@ async function savePalpite() {
   const jogos = jogosCache[round];
   if (!jogos || !jogos.length) { showToast('⚠️ Carregue os jogos primeiro!', true); return; }
 
-  // Monta palpites e verifica campos obrigatórios
+  // Captura todos os valores IMEDIATAMENTE antes de qualquer outra operação
+  const valoresCapturados = {};
+  jogos.forEach((j, idx) => {
+    const h = document.getElementById(`ph_${round}_${idx}`);
+    const a = document.getElementById(`pa_${round}_${idx}`);
+    valoresCapturados[idx] = {
+      hVal: h ? String(h.value).trim() : '',
+      aVal: a ? String(a.value).trim() : '',
+      disabled: h ? h.disabled : true
+    };
+  });
+
   const palpites = {};
   const jogos_ids = [];
   const jogos_horarios = {};
@@ -356,11 +367,8 @@ async function savePalpite() {
     const id = idx + 1;
     jogos_ids.push(id);
     jogos_horarios[id] = String(j.utcDate || '').replace(' ', 'T');
-    const h = document.getElementById(`ph_${round}_${idx}`);
-    const a = document.getElementById(`pa_${round}_${idx}`);
-    if (h && !h.disabled) {
-      const hVal = String(h.value).trim();
-      const aVal = String(a.value).trim();
+    const { hVal, aVal, disabled } = valoresCapturados[idx];
+    if (!disabled) {
       if (hVal === '' || aVal === '') {
         faltando.push(`${j.home} x ${j.away}`);
       } else {

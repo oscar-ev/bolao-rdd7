@@ -265,11 +265,13 @@ function lerPalpite(palpites, id) {
   if (!palpites) return null;
   const p = palpites[id] ?? palpites[String(id)] ?? null;
   if (!p) return null;
-  // Rejeita se home ou away for null, undefined, string vazia ou NaN
-  if (p.home === null || p.home === undefined || p.home === '' ||
-      p.away === null || p.away === undefined || p.away === '') return null;
-  const h = Number(p.home);
-  const a = Number(p.away);
+  // Usa toString para garantir que 0 não seja tratado como falsy
+  const hStr = String(p.home ?? '').trim();
+  const aStr = String(p.away ?? '').trim();
+  if (hStr === '' || hStr === 'null' || hStr === 'undefined') return null;
+  if (aStr === '' || aStr === 'null' || aStr === 'undefined') return null;
+  const h = parseInt(hStr, 10);
+  const a = parseInt(aStr, 10);
   if (isNaN(h) || isNaN(a) || h < 0 || a < 0) return null;
   return { home: h, away: a };
 }

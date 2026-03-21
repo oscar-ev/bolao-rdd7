@@ -519,7 +519,7 @@ function renderParticipantes(round) {
         const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
         const cls = det==='exact'?'exact':det==='winner'?'winner':'';
         const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
-        palpHTML += `<div class="pal-item ${cls}"><span>${j.home} × ${j.away}</span><span class="pal-score">${pal.home}–${pal.away}${badge}</span></div>`;
+        palpHTML += `<div class="pal-item ${cls}"><span>${j.home} × ${j.away}</span><span class="pal-score">${pal.home} × ${pal.away}${badge}</span></div>`;
       });
       if (!palpHTML) palpHTML = '<span style="color:var(--muted);font-size:.78rem">Sem palpites válidos registrados.</span>';
     } else {
@@ -587,7 +587,7 @@ function renderRankingRodada(round) {
         const det = p.detalhes ? (p.detalhes[id] ?? p.detalhes[String(id)] ?? null) : null;
         const palCls = det==='exact'?'exact':det==='winner'?'winner':'';
         const badge = det==='exact'?'<span class="pal-badge exact">3pts</span>':det==='winner'?'<span class="pal-badge winner">1pt</span>':'';
-        palpHTML += `<div class="pal-item ${palCls}"><span>${j.home} × ${j.away}</span><span class="pal-score">${pal.home}–${pal.away}${badge}</span></div>`;
+        palpHTML += `<div class="pal-item ${palCls}"><span>${j.home} × ${j.away}</span><span class="pal-score">${pal.home} × ${pal.away}${badge}</span></div>`;
       });
     }
 
